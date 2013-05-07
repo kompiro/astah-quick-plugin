@@ -1,7 +1,7 @@
 Quick Command プラグイン
 ===============================
 
-![demo](https://raw.github.com/kompiro/astah-quick-plugin/master/docs/images/demo.gif)
+![demo](https://raw.github.com/ChangeVision/astah-quick-plugin/master/docs/images/demo.gif)
 
 バージョン
 ----------------
@@ -9,7 +9,7 @@ Quick Command プラグイン
 
 対象エディション
 ----------------
-Astah Professional 6.7 or later
+Astah Professional 6.6.4 or later
 
 概要
 ----------------
@@ -19,7 +19,7 @@ Quick Windowには1行の入力フィールドがあり、予め定義された�
 
 インストール方法
 ----------------
-0. [JARファイルのダウンロード](http://afternoon-spire-2467.herokuapp.com/plugins/file/quick-1.0.0.jar)
+0. [JARファイルのダウンロード](http://astah.change-vision.com/plugins/quick/1.0.0.html)
 1. astah*を起動
 2. プラグイン一覧からインストールする ([ヘルプ]-[プラグイン一覧])
 3. インストール後、再起動するとQuick Windowを表示するための設定画面が開かれます。
