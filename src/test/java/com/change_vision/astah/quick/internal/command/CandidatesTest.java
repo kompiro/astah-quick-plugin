@@ -1,9 +1,12 @@
 package com.change_vision.astah.quick.internal.command;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -114,6 +117,8 @@ public class CandidatesTest {
         assertThat(actual.length, is(1));
         CandidateState next = candidates.getState();
         assertThat(next, is(instanceOf(SelectArgument.class)));
+        Command currentCommand = candidates.currentCommand();
+        assertThat(currentCommand.getName(),is("new project"));
     }
     
     @Test
@@ -135,6 +140,21 @@ public class CandidatesTest {
         assertThat(actual,is(notNullValue()));
         assertThat(actual.length,is(1));
     }
+    
+    @Test(expected=IllegalStateException.class)
+	public void filterWithIllegalSelectCommandState() throws Exception {
+		CandidateState newState = mock(SelectCommand.class);
+		candidates.setState(newState);
+		candidates.filter("");
+	}
+
+    @Test(expected=IllegalStateException.class)
+	public void filterWithIllegalSelectArgument() throws Exception {
+        commandBuilder.commit(providerCommand);
+		CandidateState newState = mock(SelectArgument.class);
+		candidates.setState(newState);
+		candidates.filter("");
+	}
 
     @Test
     public void changeStateWhenRemoveTheNameString() throws Exception {
@@ -142,7 +162,6 @@ public class CandidatesTest {
         commandBuilder.removeCandidate();
         candidates.filter("new");
         Candidate[] actual = candidates.getCandidates();
-        System.out.println(actual);
         assertThat(actual.length, is(2));
         CandidateState next = candidates.getState();
         assertThat(next, is(instanceOf(SelectCommand.class)));
@@ -181,7 +200,19 @@ public class CandidatesTest {
         CandidateState next = candidates.getState();
         assertThat(next, is(instanceOf(SelectCommand.class)));
     }
-    
+
+    @Test
+    public void undecidedCandidate() throws Exception {
+        when(providerCommand.candidate((Candidate[])any(), anyString())).thenReturn(new Candidate[]{
+                first
+        });
+        commandBuilder.commit(providerCommand);
+        candidates.filter("Event");
+        Candidate[] actual = candidates.getCandidates();
+        assertThat(actual.length,is(1));
+        assertThat(commandBuilder.getCandidates().length,is(0));
+    }
+
     @Test
     public void decideCandidate() throws Exception {
         when(providerCommand.candidate((Candidate[])any(), anyString())).thenReturn(new Candidate[]{
