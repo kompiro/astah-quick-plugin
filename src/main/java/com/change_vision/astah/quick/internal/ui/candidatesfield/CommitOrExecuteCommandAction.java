@@ -29,7 +29,7 @@ final class CommitOrExecuteCommandAction extends AbstractAction {
 
     CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow,CommandBuilder builder, CandidatesSelector selector) {
         super("commit-or-execute-command");
-        this.decider = new CandidateDecider(quickWindow, field);
+        this.decider = new CandidateDecider(quickWindow,field,builder);
         this.builder = builder;
         this.selector = selector;
     }
@@ -38,6 +38,6 @@ final class CommitOrExecuteCommandAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         logger.trace("press enter");
         Candidate candidate = selector.current();
-        decider.decide(builder,candidate);
+        decider.decide(candidate);
     }
 }

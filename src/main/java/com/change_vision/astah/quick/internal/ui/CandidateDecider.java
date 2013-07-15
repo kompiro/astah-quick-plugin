@@ -15,21 +15,24 @@ public class CandidateDecider {
     
     private final QuickWindow quickWindow;
     private final CandidatesField candidatesField;
+    private final CommandBuilder builder;
     private final CommandExecutor executor;
 
-    public CandidateDecider(QuickWindow quickWindow,CandidatesField field){
+    public CandidateDecider(QuickWindow quickWindow,CandidatesField field, CommandBuilder builder){
         this.quickWindow = quickWindow;
         this.candidatesField = field;
+        this.builder = builder;
         this.executor = new CommandExecutor();
     }
 
-    CandidateDecider(QuickWindow quickWindow, CandidatesField field, CommandExecutor executor){
+    CandidateDecider(QuickWindow quickWindow, CandidatesField field, CommandBuilder builder, CommandExecutor executor){
         this.quickWindow = quickWindow;
         this.candidatesField = field;
+        this.builder = builder;
         this.executor = executor;
     }
 
-    public void decide(CommandBuilder builder, Candidate candidate) {
+    public void decide(Candidate candidate) {
         if (candidate == null) {
             throw new IllegalArgumentException("candidate is null");
         }

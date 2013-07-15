@@ -67,23 +67,22 @@ public class CandidateDeciderTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        decider = new CandidateDecider(window, candidatesField, executor);
-        when(candidates.getCommandBuilder()).thenReturn(builder);
+        decider = new CandidateDecider(window, candidatesField,builder , executor);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decideWithNull(){
-        decider.decide(null,null);
+        decider.decide(null);
     }
 
    @Test(expected = IllegalArgumentException.class)
     public void decideWithCurrentSelectIsNull(){
-       decider.decide(builder,null);
+       decider.decide(null);
    }
 
     @Test
     public void decideWithInvalidState() throws ExecuteCommandException {
-        decider.decide(builder,invalidState);
+        decider.decide(invalidState);
 
         verify(window,never()).close();
         verify(executor,never()).execute(any(CommandBuilder.class), anyString());
@@ -93,7 +92,7 @@ public class CandidateDeciderTest {
 
     @Test
     public void decideWithValidState() throws Exception {
-        decider.decide(builder,validState);
+        decider.decide(validState);
 
         verify(window).close();
         verify(executor).execute(any(CommandBuilder.class), anyString());
@@ -104,7 +103,7 @@ public class CandidateDeciderTest {
     @Test
     public void decideWithValidStateWhenThrowExceptionInExecute() throws Exception {
         doThrow(new RuntimeException()).when(executor).execute(any(CommandBuilder.class), anyString());
-        decider.decide(builder,validState);
+        decider.decide(validState);
 
         verify(window).close();
         verify(window).notifyError(anyString(), anyString());
@@ -112,13 +111,13 @@ public class CandidateDeciderTest {
 
     @Test(expected = IllegalStateException.class)
     public void decideCandidateWithCandidateWhenNotCommitted() throws Exception {
-        decider.decide(builder,candidate);
+        decider.decide(candidate);
     }
 
     @Test
     public void decideCandidateWithCandidate() throws Exception {
         when(builder.isCommitted()).thenReturn(true);
-        decider.decide(builder,candidate);
+        decider.decide(candidate);
 
         verify(builder).add(eq(candidate));
         verify(candidatesField).setText(anyString());
@@ -131,7 +130,7 @@ public class CandidateDeciderTest {
     @Test
     public void decideCandidateWithImmediateCandidate() throws Exception {
         when(builder.isCommitted()).thenReturn(true);
-        decider.decide(builder,immediateCandidate);
+        decider.decide(immediateCandidate);
 
         verify(builder).add(eq(immediateCandidate));
         verify(candidatesField).setText(anyString());
@@ -146,12 +145,12 @@ public class CandidateDeciderTest {
     @Test(expected = IllegalArgumentException.class)
     public void decideCandidateWithCommand() throws Exception {
         when(builder.isCommitted()).thenReturn(true);
-        decider.decide(builder,command);
+        decider.decide(command);
     }
 
     @Test
     public void decideCommandWithNotImmediateCommand() throws Exception {
-        decider.decide(builder,command);
+        decider.decide(command);
 
         verify(builder).commit(command);
         verify(candidatesField).setText(anyString());
@@ -159,7 +158,7 @@ public class CandidateDeciderTest {
 
     @Test
     public void decideCommandWithImmediateCommand() throws Exception {
-        decider.decide(builder,immediateCommand);
+        decider.decide(immediateCommand);
 
         verify(builder).commit(immediateCommand);
         verify(candidatesField).setText(anyString());

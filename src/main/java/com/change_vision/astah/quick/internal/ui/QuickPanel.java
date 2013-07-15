@@ -34,12 +34,10 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
     private static final class CandidateDoubleClickListener extends MouseAdapter {
         private final CandidateDecider decider;
         private final CandidatesSelector selector;
-        private final CommandBuilder builder;
 
         private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,
                                              CommandBuilder builder,CandidatesSelector selector) {
-            this.decider = new CandidateDecider(quickWindow,candidatesField);
-            this.builder = builder;
+            this.decider = new CandidateDecider(quickWindow,candidatesField,builder);
             this.selector = selector;
         }
 
@@ -47,7 +45,7 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() > 1) {
                 Candidate candidate = selector.current();
-                decider.decide(builder,candidate);
+                decider.decide(candidate);
             }
         }
     }
