@@ -46,7 +46,8 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
         this.selector = selector;
         Candidates candidates = selector.getCandidatesObject();
         candidates.addPropertyChangeListener(this);
-        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow,selector);
+        CommandBuilder builder = candidates.getCommandBuilder();
+        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow,builder,selector);
         setAction(commandAction);
         new UpCandidatesListAction(this,this.candidatesList);
         new DownCandidatesListAction(this,this.candidatesList);

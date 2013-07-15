@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import net.miginfocom.swing.MigLayout;
 
@@ -30,19 +31,23 @@ import com.change_vision.astah.quick.internal.ui.candidatesfield.state.Candidate
 @SuppressWarnings("serial")
 public class QuickPanel extends JPanel implements PropertyChangeListener {
 
-    private final class CandidateDoubleClickListener extends MouseAdapter {
+    private static final class CandidateDoubleClickListener extends MouseAdapter {
         private final CandidateDecider decider;
         private final CandidatesSelector selector;
+        private final CommandBuilder builder;
 
-        private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,CandidatesSelector selector) {
+        private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,
+                                             CommandBuilder builder,CandidatesSelector selector) {
             this.decider = new CandidateDecider(quickWindow,candidatesField);
+            this.builder = builder;
             this.selector = selector;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() > 1) {
-                decider.decide(selector);
+                Candidate candidate = selector.current();
+                decider.decide(builder,candidate);
             }
         }
     }
@@ -75,8 +80,8 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
 //        helpField = new HelpField();
 //        add(helpField, "cell 1 1,growx");
         add(candidatesList,"cell 0 2,span 2,growx");
-        
-        candidatesList.addMouseListener(new CandidateDoubleClickListener(quickWindow,candidatesField,selector));
+
+        candidatesList.addMouseListener(new CandidateDoubleClickListener(quickWindow,candidatesField, builder, selector));
     }
         
     public void opened(){

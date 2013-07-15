@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import com.change_vision.astah.quick.command.Candidate;
+import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +25,19 @@ final class CommitOrExecuteCommandAction extends AbstractAction {
 
     private final CandidatesSelector selector;
 
-    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow,CandidatesSelector selector) {
+    private final CommandBuilder builder;
+
+    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow,CommandBuilder builder, CandidatesSelector selector) {
         super("commit-or-execute-command");
         this.decider = new CandidateDecider(quickWindow, field);
+        this.builder = builder;
         this.selector = selector;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         logger.trace("press enter");
-        decider.decide(selector);
+        Candidate candidate = selector.current();
+        decider.decide(builder,candidate);
     }
 }

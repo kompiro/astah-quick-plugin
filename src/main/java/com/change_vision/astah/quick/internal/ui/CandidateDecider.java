@@ -28,14 +28,10 @@ public class CandidateDecider {
         this.candidatesField = field;
         this.executor = executor;
     }
-    
-    public void decide(CandidatesSelector selector) {
-        if(selector == null) throw new IllegalArgumentException("selector is null");
-        Candidates candidates = selector.getCandidatesObject();
-        CommandBuilder builder = candidates.getCommandBuilder();
-        Candidate candidate = selector.current();
+
+    public void decide(CommandBuilder builder, Candidate candidate) {
         if (candidate == null) {
-            throw new IllegalStateException("current select is null");
+            throw new IllegalArgumentException("candidate is null");
         }
         if (candidate instanceof InvalidState) {
             return;
