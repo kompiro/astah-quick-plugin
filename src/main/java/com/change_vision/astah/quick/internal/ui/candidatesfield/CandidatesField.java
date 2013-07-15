@@ -19,7 +19,7 @@ import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
 
 @SuppressWarnings("serial")
-public final class CandidatesField extends JTextField implements PropertyChangeListener {
+public class CandidatesField extends JTextField implements PropertyChangeListener {
 
     /**
      * Logger for this class
