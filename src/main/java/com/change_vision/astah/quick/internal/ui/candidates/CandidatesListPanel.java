@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class CandidatesListPanel extends JPanel {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int index = candidateList.getSelectedIndex();
-            candidates.setCurrentIndex(index);
+            selector.setCurrentIndex(index);
         }
     }
 
@@ -40,12 +41,12 @@ public class CandidatesListPanel extends JPanel {
     private static final Logger logger = LoggerFactory.getLogger(CandidatesListPanel.class);
 
     private CandidatesList candidateList;
-    private Candidates candidates;
+    private CandidatesSelector selector;
 
     private JScrollPane scrollPane;
 
-    public CandidatesListPanel(Candidates candidates) {
-        this.candidates = candidates;
+    public CandidatesListPanel(CandidatesSelector selector) {
+        this.selector = selector;
         scrollPane = new JScrollPane(VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setAutoscrolls(true);
         candidateList = new CandidatesList();
@@ -72,7 +73,9 @@ public class CandidatesListPanel extends JPanel {
     }
 
     public void setCandidateText(String commandCandidateText) {
+        Candidates candidates = selector.getCandidatesObject();
         candidates.filter(commandCandidateText);
+        selector.setCurrentIndex(0);
         Candidate[] candidatesData = candidates.getCandidates();
 
         candidateList.setListData(candidatesData);
@@ -87,15 +90,15 @@ public class CandidatesListPanel extends JPanel {
     }
 
     public void up() {
-        candidates.up();
-        Candidate command = candidates.current();
+        selector.up();
+        Candidate command = selector.current();
         logger.trace("up : current '{}'", command);
         candidateList.setSelectedValue(command, true);
     }
 
     public void down() {
-        candidates.down();
-        Candidate candidate = candidates.current();
+        selector.down();
+        Candidate candidate = selector.current();
         logger.trace("down : current '{}'", candidate);
         candidateList.setSelectedValue(candidate, true);
     }

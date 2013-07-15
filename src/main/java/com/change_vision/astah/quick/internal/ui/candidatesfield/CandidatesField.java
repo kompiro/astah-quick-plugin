@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,9 @@ public final class CandidatesField extends JTextField implements PropertyChangeL
 
     private boolean settingText;
 
-    private Candidates candidates;
+    private CandidatesSelector selector;
 
-    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList,Candidates candidates) {
+    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList,CandidatesSelector selector) {
         this.quickWindow = quickWindow;
         this.candidatesList = candidatesList;
         setFont(new Font("Dialog", Font.PLAIN, 32));
@@ -42,9 +43,10 @@ public final class CandidatesField extends JTextField implements PropertyChangeL
         if (candidatesList == null) {
             return;
         }
-        this.candidates = candidates;
-        this.candidates.addPropertyChangeListener(this);
-        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow,candidates);
+        this.selector = selector;
+        Candidates candidates = selector.getCandidatesObject();
+        candidates.addPropertyChangeListener(this);
+        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow,selector);
         setAction(commandAction);
         new UpCandidatesListAction(this,this.candidatesList);
         new DownCandidatesListAction(this,this.candidatesList);
@@ -100,6 +102,7 @@ public final class CandidatesField extends JTextField implements PropertyChangeL
 
     private void closeCandidatesListAndReset() {
         logger.trace("closeCandidatesListAndReset");
+        Candidates candidates = selector.getCandidatesObject();
         candidates.reset();
     }
 
@@ -115,6 +118,7 @@ public final class CandidatesField extends JTextField implements PropertyChangeL
     }
 
     public String getCandidateText() {
+        Candidates candidates = selector.getCandidatesObject();
         CommandBuilder builder = candidates.getCommandBuilder();
         return builder.getCandidateText(getText());
     }

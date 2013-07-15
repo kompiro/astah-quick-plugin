@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import net.miginfocom.swing.MigLayout;
 
 import com.change_vision.astah.quick.command.CandidateIconDescription;
@@ -31,17 +32,17 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
 
     private final class CandidateDoubleClickListener extends MouseAdapter {
         private final CandidateDecider decider;
-        private final Candidates candidates;
+        private final CandidatesSelector selector;
 
-        private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,Candidates candidates) {
+        private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,CandidatesSelector selector) {
             this.decider = new CandidateDecider(quickWindow,candidatesField);
-            this.candidates = candidates;
+            this.selector = selector;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() > 1) {
-                decider.decide(candidates);
+                decider.decide(selector);
             }
         }
     }
@@ -54,7 +55,8 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
 
     public QuickPanel(final QuickWindow quickWindow,Candidates candidates) {
         setLayout(new MigLayout("", "[32px][grow]", "[][][]"));
-        candidatesList = new CandidatesListPanel(candidates);
+        CandidatesSelector selector = new CandidatesSelector(candidates);
+        candidatesList = new CandidatesListPanel(selector);
         
         URL astahIconURL = this.getClass().getResource("/icons/astah_icon_professional.png");
         BufferedImage image;
@@ -68,14 +70,13 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
         CommandBuilder builder = candidates.getCommandBuilder();
         builder.addPropertyChangeListener(this);
         add(iconLabel, "cell 0 0,left");
-        
-        candidatesField = new CandidatesField(quickWindow,candidatesList,candidates);
+        candidatesField = new CandidatesField(quickWindow,candidatesList,selector);
         add(candidatesField, "cell 1 0,growx");
 //        helpField = new HelpField();
 //        add(helpField, "cell 1 1,growx");
         add(candidatesList,"cell 0 2,span 2,growx");
         
-        candidatesList.addMouseListener(new CandidateDoubleClickListener(quickWindow,candidatesField,candidates));
+        candidatesList.addMouseListener(new CandidateDoubleClickListener(quickWindow,candidatesField,selector));
     }
         
     public void opened(){

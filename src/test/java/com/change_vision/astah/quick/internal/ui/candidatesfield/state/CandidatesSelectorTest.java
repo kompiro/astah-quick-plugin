@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.change_vision.astah.quick.internal.command.Candidates;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -15,7 +16,7 @@ import com.change_vision.astah.quick.command.candidates.NotFound;
 
 public class CandidatesSelectorTest {
 
-    private CandidatesSelector<Candidate> selector;
+    private CandidatesSelector selector;
 
     @Mock
     private Candidate one;
@@ -26,10 +27,13 @@ public class CandidatesSelectorTest {
     @Mock
     private Candidate three;
 
+    @Mock
+    private Candidates candidates;
+
     @Before
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
-        selector = new CandidatesSelector<Candidate>();
+        selector = new CandidatesSelector(candidates);
 
         when(one.getName()).thenReturn("one");
         when(two.getName()).thenReturn("two");
@@ -46,7 +50,7 @@ public class CandidatesSelectorTest {
 
     @Test
     public void onlyOneCandidate() throws Exception {
-        selector.setCandidates(new Candidate[] { one });
+        when(candidates.getCandidates()).thenReturn(new Candidate[]{one});
         selector.up();
         selector.down();
         Candidate current = selector.current();
@@ -55,7 +59,7 @@ public class CandidatesSelectorTest {
 
     @Test
     public void twoCandidates() throws Exception {
-        selector.setCandidates(new Candidate[] { one, two });
+        when(candidates.getCandidates()).thenReturn(new Candidate[] { one, two });
         selector.down();
         Candidate current = selector.current();
         assertThat(current, is(two));
@@ -75,7 +79,7 @@ public class CandidatesSelectorTest {
     
     @Test
     public void setSelectionIndex() throws Exception {
-        selector.setCandidates(new Candidate[] { one, two, three });
+        when(candidates.getCandidates()).thenReturn(new Candidate[] { one, two, three });
 
         selector.setCurrentIndex(1);
 

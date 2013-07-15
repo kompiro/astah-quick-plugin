@@ -9,6 +9,7 @@ import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.command.CommandExecutor;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 
 public class CandidateDecider {
     
@@ -21,9 +22,10 @@ public class CandidateDecider {
         this.candidatesField = field;
     }
     
-    public void decide(Candidates candidates) {
+    public void decide(CandidatesSelector selector) {
+        Candidates candidates = selector.getCandidatesObject();
         CommandBuilder builder = candidates.getCommandBuilder();
-        Candidate candidate = candidates.current();
+        Candidate candidate = selector.current();
         if (candidate instanceof InvalidState) {
             return;
         }
