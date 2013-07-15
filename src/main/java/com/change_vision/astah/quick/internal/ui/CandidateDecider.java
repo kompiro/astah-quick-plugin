@@ -15,17 +15,28 @@ public class CandidateDecider {
     
     private final QuickWindow quickWindow;
     private final CandidatesField candidatesField;
-    private final CommandExecutor executor = new CommandExecutor();
+    private final CommandExecutor executor;
 
     public CandidateDecider(QuickWindow quickWindow,CandidatesField field){
         this.quickWindow = quickWindow;
         this.candidatesField = field;
+        this.executor = new CommandExecutor();
+    }
+
+    CandidateDecider(QuickWindow quickWindow, CandidatesField field, CommandExecutor executor){
+        this.quickWindow = quickWindow;
+        this.candidatesField = field;
+        this.executor = executor;
     }
     
     public void decide(CandidatesSelector selector) {
+        if(selector == null) throw new IllegalArgumentException("selector is null");
         Candidates candidates = selector.getCandidatesObject();
         CommandBuilder builder = candidates.getCommandBuilder();
         Candidate candidate = selector.current();
+        if (candidate == null) {
+            throw new IllegalStateException("current select is null");
+        }
         if (candidate instanceof InvalidState) {
             return;
         }
@@ -33,16 +44,32 @@ public class CandidateDecider {
             executeCommand(builder);
             return;
         }
+
+        boolean decided = false;
+        decided |= decideCandidate(builder, candidate);
+        if (decided) return;
+        decided |= decideCommand(builder, candidate);
+        if(decided) return;
+        throw new IllegalStateException("candidate is not command " + candidate);
+    }
+
+    private boolean decideCandidate(CommandBuilder builder, Candidate candidate) {
         if (builder.isCommitted()) {
+            if ( candidate instanceof Command){
+                throw new IllegalArgumentException("command is committed but candidate specify command. maybe it is bug.");
+            }
             builder.add(candidate);
             String commandText = builder.getCommandText() + CommandExecutor.SEPARATE_COMMAND_CHAR;
             candidatesField.setText(commandText);
             if (isImmidiateCandidate(candidate)) {
                 executeCommand(builder);
-                return;
             }
-            return;
+            return true;
         }
+        return false;
+    }
+
+    private boolean decideCommand(CommandBuilder builder, Candidate candidate) {
         if (candidate instanceof Command) {
             Command command = (Command) candidate;
             builder.commit(command);
@@ -50,9 +77,10 @@ public class CandidateDecider {
             candidatesField.setText(commandText);
             if (isImmidiateCommand(command)) {
                 executeCommand(builder);
-                return;
             }
+            return true;
         }
+        return false;
     }
 
     private boolean isImmidiateCandidate(Candidate candidate) {
