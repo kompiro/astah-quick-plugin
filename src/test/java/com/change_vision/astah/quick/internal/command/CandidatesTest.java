@@ -1,33 +1,32 @@
 package com.change_vision.astah.quick.internal.command;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+import com.change_vision.astah.quick.command.Candidate;
+import com.change_vision.astah.quick.command.CandidatesProvider;
+import com.change_vision.astah.quick.command.Command;
+import com.change_vision.astah.quick.command.candidates.ValidState;
+import com.change_vision.astah.quick.internal.command.Candidates.SelectCommandFactory;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateState;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.SelectArgument;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.SelectCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.change_vision.astah.quick.command.Candidate;
-import com.change_vision.astah.quick.command.CandidatesProvider;
-import com.change_vision.astah.quick.command.Command;
-import com.change_vision.astah.quick.internal.command.Candidates.SelectCommandFactory;
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateState;
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.SelectArgument;
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.SelectCommand;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CandidatesTest {
 
     private static abstract class CandidatesProviderCommand implements Command, CandidatesProvider {
 
     }
+
     private Candidates candidates;
 
     @Mock
@@ -38,7 +37,7 @@ public class CandidatesTest {
 
     @Mock
     private Command two;
-    
+
     @Mock
     private CandidatesProviderCommand providerCommand;
 
@@ -71,13 +70,13 @@ public class CandidatesTest {
         when(two.isEnabled()).thenReturn(true);
         commands.add(one);
         commands.add(two);
-        
+
         when(first.getName()).thenReturn("EventObject");
         when(second.getName()).thenReturn("EnumSet");
         when(third.getName()).thenReturn("EventListener");
-        
+
         commandBuilder = new CommandBuilder();
-        candidates = new Candidates(commands,commandBuilder);
+        candidates = new Candidates(commands, commandBuilder);
         candidates.setCommandFactory(commandFactory);
     }
 
@@ -96,7 +95,7 @@ public class CandidatesTest {
     public void filterWithEmpty() throws Exception {
         candidates.filter("");
         Candidate[] actual = candidates.getCandidates();
-        assertThat(actual,is(notNullValue()));
+        assertThat(actual, is(notNullValue()));
         CandidateState next = candidates.getState();
         assertThat(next, is(instanceOf(SelectCommand.class)));
     }
@@ -111,51 +110,53 @@ public class CandidatesTest {
     }
 
     @Test
-    public void filterWitnFoundOnlyOneCommand() throws Exception {
+    public void filterWithFoundOnlyOneCommand() throws Exception {
         candidates.filter("new project");
+
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual.length, is(1));
         CandidateState next = candidates.getState();
         assertThat(next, is(instanceOf(SelectArgument.class)));
-        // FIXME
-//        Command currentCommand = candidates.currentCommand();
-//        assertThat(currentCommand.getName(),is("new project"));
+        Candidate actualCandidate = actual[0];
+        assertThat(actualCandidate, is(instanceOf(ValidState.class)));
+        Command command = ((ValidState) actualCandidate).getCommand();
+        assertThat(command.getName(), is("new project"));
     }
-    
+
     @Test
     public void filterWithNotFoundCommand() throws Exception {
         candidates.filter("not found");
         Candidate[] actual = candidates.getCandidates();
-        assertThat(actual,is(notNullValue()));
-        assertThat(actual.length,is(1));
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual.length, is(1));
         CandidateState next = candidates.getState();
         assertThat(next, is(instanceOf(SelectCommand.class)));
     }
-    
+
     @Test
     public void filterWithNotFoundArgument() throws Exception {
         commandBuilder.commit(providerCommand);
         candidates.setState(new SelectArgument(commandBuilder));
         candidates.filter("not found");
         Candidate[] actual = candidates.getCandidates();
-        assertThat(actual,is(notNullValue()));
-        assertThat(actual.length,is(1));
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual.length, is(1));
     }
-    
-    @Test(expected=IllegalStateException.class)
-	public void filterWithIllegalSelectCommandState() throws Exception {
-		CandidateState newState = mock(SelectCommand.class);
-		candidates.setState(newState);
-		candidates.filter("");
-	}
 
-    @Test(expected=IllegalStateException.class)
-	public void filterWithIllegalSelectArgument() throws Exception {
+    @Test(expected = IllegalStateException.class)
+    public void filterWithIllegalSelectCommandState() throws Exception {
+        CandidateState newState = mock(SelectCommand.class);
+        candidates.setState(newState);
+        candidates.filter("");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void filterWithIllegalSelectArgument() throws Exception {
         commandBuilder.commit(providerCommand);
-		CandidateState newState = mock(SelectArgument.class);
-		candidates.setState(newState);
-		candidates.filter("");
-	}
+        CandidateState newState = mock(SelectArgument.class);
+        candidates.setState(newState);
+        candidates.filter("");
+    }
 
     @Test
     public void changeStateWhenRemoveTheNameString() throws Exception {
@@ -204,38 +205,38 @@ public class CandidatesTest {
 
     @Test
     public void undecidedCandidate() throws Exception {
-        when(providerCommand.candidate((Candidate[])any(), anyString())).thenReturn(new Candidate[]{
+        when(providerCommand.candidate((Candidate[]) any(), anyString())).thenReturn(new Candidate[]{
                 first
         });
         commandBuilder.commit(providerCommand);
         candidates.filter("Event");
         Candidate[] actual = candidates.getCandidates();
-        assertThat(actual.length,is(1));
-        assertThat(commandBuilder.getCandidates().length,is(0));
+        assertThat(actual.length, is(1));
+        assertThat(commandBuilder.getCandidates().length, is(0));
     }
 
     @Test
     public void decideCandidate() throws Exception {
-        when(providerCommand.candidate((Candidate[])any(), anyString())).thenReturn(new Candidate[]{
+        when(providerCommand.candidate((Candidate[]) any(), anyString())).thenReturn(new Candidate[]{
                 first
         });
         commandBuilder.commit(providerCommand);
         candidates.filter("EventObject ");
         Candidate[] actual = candidates.getCandidates();
-        assertThat(actual.length,is(1));
-        assertThat(commandBuilder.getCandidates().length,is(1));
+        assertThat(actual.length, is(1));
+        assertThat(commandBuilder.getCandidates().length, is(1));
     }
-    
+
     @Test
     public void sortCandidates() throws Exception {
-        when(providerCommand.candidate((Candidate[])any(), anyString())).thenReturn(new Candidate[]{
-                first,second,third
+        when(providerCommand.candidate((Candidate[]) any(), anyString())).thenReturn(new Candidate[]{
+                first, second, third
         });
         commandBuilder.commit(providerCommand);
         candidates.filter("");
         Candidate[] actual = candidates.getCandidates();
-        assertThat(actual[0].getName(),is("EnumSet"));
-        assertThat(actual[1].getName(),is("EventListener"));
-        assertThat(actual[2].getName(),is("EventObject"));
+        assertThat(actual[0].getName(), is("EnumSet"));
+        assertThat(actual[1].getName(), is("EventListener"));
+        assertThat(actual[2].getName(), is("EventObject"));
     }
 }

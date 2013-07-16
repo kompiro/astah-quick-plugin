@@ -19,16 +19,20 @@ import static java.lang.String.format;
 
 public class Candidates implements PropertyChangeListener {
 
-    private final class NameComparator implements Comparator<Candidate> {
+    private final static class CandidateNameComparator implements Comparator<Candidate> {
         @Override
         public int compare(Candidate o1, Candidate o2) {
             return o1.getName().compareTo(o2.getName());
         }
     }
 
-    private Commands commands;
+    static class SelectCommandFactory {
+        private Commands commands;
 
-    class SelectCommandFactory {
+        SelectCommandFactory(Commands commands) {
+            this.commands = commands;
+        }
+
         SelectCommand create() {
             return new SelectCommand(commands);
         }
@@ -41,7 +45,9 @@ public class Candidates implements PropertyChangeListener {
      */
     private static final Logger logger = LoggerFactory.getLogger(Candidates.class);
 
-    private SelectCommandFactory commandFactory = new SelectCommandFactory();
+    private Commands commands;
+
+    private SelectCommandFactory commandFactory;
 
     private CandidateState state;
 
@@ -55,6 +61,7 @@ public class Candidates implements PropertyChangeListener {
         this.commands = commands;
         this.commandBuilder = commandBuilder;
         this.commandBuilder.addPropertyChangeListener(this);
+        this.commandFactory = new SelectCommandFactory(commands);
         this.state = commandFactory.create();
     }
 
@@ -141,7 +148,7 @@ public class Candidates implements PropertyChangeListener {
 
     public Candidate[] getCandidates() {
         if (isCommitted()) {
-            Arrays.sort(this.candidates, new NameComparator());
+            Arrays.sort(this.candidates, new CandidateNameComparator());
         }
         return this.candidates;
     }

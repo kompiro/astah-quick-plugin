@@ -6,12 +6,14 @@ import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.CandidateIconDescription;
 import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.internal.Messages;
+import com.change_vision.astah.quick.internal.annotations.TestForMethod;
 
 public class ValidState implements Candidate {
 
     private Command command;
     
     private String args;
+
     public ValidState(Command command,String args) {
         this.command = command;
         this.args = args;
@@ -36,6 +38,11 @@ public class ValidState implements Candidate {
     @Override
     public CandidateIconDescription getIconDescription() {
         return command.getIconDescription();
+    }
+
+    @TestForMethod
+    public Command getCommand(){
+        return this.command;
     }
 
 }
