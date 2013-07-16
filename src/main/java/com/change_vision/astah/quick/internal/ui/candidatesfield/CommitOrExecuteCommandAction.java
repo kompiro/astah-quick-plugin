@@ -1,18 +1,15 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.internal.command.CommandBuilder;
+import com.change_vision.astah.quick.internal.ui.CandidateDecider;
+import com.change_vision.astah.quick.internal.ui.QuickWindow;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.change_vision.astah.quick.internal.command.Candidates;
-import com.change_vision.astah.quick.internal.ui.CandidateDecider;
-import com.change_vision.astah.quick.internal.ui.QuickWindow;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 final class CommitOrExecuteCommandAction extends AbstractAction {
@@ -27,9 +24,9 @@ final class CommitOrExecuteCommandAction extends AbstractAction {
 
     private final CommandBuilder builder;
 
-    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow,CommandBuilder builder, CandidatesSelector selector) {
+    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow, CommandBuilder builder, CandidatesSelector selector) {
         super("commit-or-execute-command");
-        this.decider = new CandidateDecider(quickWindow,field,builder);
+        this.decider = new CandidateDecider(quickWindow, field, builder);
         this.builder = builder;
         this.selector = selector;
     }

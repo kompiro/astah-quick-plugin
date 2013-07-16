@@ -4,6 +4,6 @@ import com.change_vision.astah.quick.command.Candidate;
 
 public interface CandidateState {
 
-	Candidate[] filter(String key);
-	
+    Candidate[] filter(String key);
+
 }

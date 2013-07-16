@@ -1,22 +1,20 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield;
 
-import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.JTextField;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.Document;
-
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.ui.QuickWindow;
 import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 @SuppressWarnings("serial")
 public class CandidatesField extends JTextField implements PropertyChangeListener {
@@ -30,31 +28,35 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
 
     private final QuickWindow quickWindow;
 
+    private final Candidates candidates;
+
     private boolean settingText;
 
-    private CandidatesSelector selector;
+    private final CandidatesSelector selector;
 
-    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList,CandidatesSelector selector) {
+    private final CommandBuilder builder;
+
+    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList, Candidates candidates, CandidatesSelector selector, CommandBuilder builder) {
         this.quickWindow = quickWindow;
         this.candidatesList = candidatesList;
+        this.candidates = candidates;
+        this.selector = selector;
+        this.builder = builder;
         setFont(new Font("Dialog", Font.PLAIN, 32));
         setColumns(16);
         setEditable(true);
         if (candidatesList == null) {
             return;
         }
-        this.selector = selector;
-        Candidates candidates = selector.getCandidatesObject();
         candidates.addPropertyChangeListener(this);
-        CommandBuilder builder = candidates.getCommandBuilder();
-        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow,builder,selector);
+        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow, builder, selector);
         setAction(commandAction);
-        new UpCandidatesListAction(this,this.candidatesList);
-        new DownCandidatesListAction(this,this.candidatesList);
+        new UpCandidatesListAction(this, this.candidatesList);
+        new DownCandidatesListAction(this, this.candidatesList);
 
         CandidatesFieldDocumentListener listener = new CandidatesFieldDocumentListener(this,
-                this.candidatesList,candidates);
-        
+                this.candidatesList, candidates, builder);
+
         Document document = getDocument();
         if (document instanceof AbstractDocument) {
             AbstractDocument abstractDocument = (AbstractDocument) document;
@@ -65,30 +67,30 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
 
     public void setWindowState(CandidateWindowState windowState) {
         switch (windowState) {
-        case Inputing:
-            openCandidatesList();
-            break;
-        case Wait:
-            closeCandidatesListAndReset();
-            break;
-        case ArgumentInputing:
-            openCandidatesList();
-            break;
-        case ArgumentWait:
-            closeCandidatesList();
-            break;
-        default:
-            throw new IllegalStateException("Illegal state of window: '" + windowState.name() + "'");
+            case Inputing:
+                openCandidatesList();
+                break;
+            case Wait:
+                closeCandidatesListAndReset();
+                break;
+            case ArgumentInputing:
+                openCandidatesList();
+                break;
+            case ArgumentWait:
+                closeCandidatesList();
+                break;
+            default:
+                throw new IllegalStateException("Illegal state of window: '" + windowState.name() + "'");
         }
     }
-    
+
     @Override
     public void setText(String t) {
         settingText = true;
         super.setText(t);
         settingText = false;
     }
-    
+
     public boolean isSettingText() {
         return settingText;
     }
@@ -103,7 +105,6 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
 
     private void closeCandidatesListAndReset() {
         logger.trace("closeCandidatesListAndReset");
-        Candidates candidates = selector.getCandidatesObject();
         candidates.reset();
     }
 
@@ -119,8 +120,6 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
     }
 
     public String getCandidateText() {
-        Candidates candidates = selector.getCandidatesObject();
-        CommandBuilder builder = candidates.getCommandBuilder();
         return builder.getCandidateText(getText());
     }
 

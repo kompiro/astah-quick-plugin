@@ -1,19 +1,16 @@
 package com.change_vision.astah.quick.internal.ui;
 
-import java.awt.KeyboardFocusManager;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.change_vision.astah.quick.internal.AstahAPIWrapper;
 import com.change_vision.astah.quick.internal.command.Commands;
 import com.change_vision.astah.quick.internal.model.QuickProperties;
 import com.change_vision.astah.quick.internal.ui.installed.InstalledWizardDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class QuickInterfaceUI {
     /**
@@ -26,7 +23,7 @@ public class QuickInterfaceUI {
     private final QuickProperties properties = QuickProperties.getInstance();
 
     public QuickInterfaceUI(Commands commands) {
-        this.dispatcher = new OpenQuickWindowEventDispatcher(properties,commands);
+        this.dispatcher = new OpenQuickWindowEventDispatcher(properties, commands);
         this.focusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
     }
 
@@ -37,7 +34,7 @@ public class QuickInterfaceUI {
                 public void run() {
                     AstahAPIWrapper wrapper = new AstahAPIWrapper();
                     JFrame parent = wrapper.getMainFrame();
-                    
+
                     InstalledWizardDialog dialog = new InstalledWizardDialog(parent);
                     dialog.setVisible(true);
                     dialog.addWindowListener(new WindowAdapter() {

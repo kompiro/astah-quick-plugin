@@ -1,11 +1,10 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield.state;
 
+import com.change_vision.astah.quick.command.Candidate;
+import com.change_vision.astah.quick.command.candidates.NotFound;
 import com.change_vision.astah.quick.internal.command.Candidates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.change_vision.astah.quick.command.Candidate;
-import com.change_vision.astah.quick.command.candidates.NotFound;
 
 public class CandidatesSelector {
 
@@ -54,14 +53,10 @@ public class CandidatesSelector {
 
     public Candidate[] getCandidates() {
         Candidate[] result = this.candidates.getCandidates();
-        if(result == null){
+        if (result == null) {
             return new Candidate[0];
         }
         return result;
-    }
-
-    public Candidates getCandidatesObject() {
-        return this.candidates;
     }
 
     public void setCurrentIndex(int index) {

@@ -5,27 +5,25 @@ import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.command.annotations.Immediate;
 import com.change_vision.astah.quick.command.candidates.InvalidState;
 import com.change_vision.astah.quick.command.candidates.ValidState;
-import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.command.CommandExecutor;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 
 public class CandidateDecider {
-    
+
     private final QuickWindow quickWindow;
     private final CandidatesField candidatesField;
     private final CommandBuilder builder;
     private final CommandExecutor executor;
 
-    public CandidateDecider(QuickWindow quickWindow,CandidatesField field, CommandBuilder builder){
+    public CandidateDecider(QuickWindow quickWindow, CandidatesField field, CommandBuilder builder) {
         this.quickWindow = quickWindow;
         this.candidatesField = field;
         this.builder = builder;
         this.executor = new CommandExecutor();
     }
 
-    CandidateDecider(QuickWindow quickWindow, CandidatesField field, CommandBuilder builder, CommandExecutor executor){
+    CandidateDecider(QuickWindow quickWindow, CandidatesField field, CommandBuilder builder, CommandExecutor executor) {
         this.quickWindow = quickWindow;
         this.candidatesField = field;
         this.builder = builder;
@@ -48,13 +46,13 @@ public class CandidateDecider {
         decided |= decideCandidate(builder, candidate);
         if (decided) return;
         decided |= decideCommand(builder, candidate);
-        if(decided) return;
+        if (decided) return;
         throw new IllegalStateException("candidate is not command " + candidate);
     }
 
     private boolean decideCandidate(CommandBuilder builder, Candidate candidate) {
         if (builder.isCommitted()) {
-            if ( candidate instanceof Command){
+            if (candidate instanceof Command) {
                 throw new IllegalArgumentException("command is committed but candidate specify command. maybe it is bug.");
             }
             builder.add(candidate);
@@ -94,7 +92,7 @@ public class CandidateDecider {
         String candidateText = candidatesField.getText();
         quickWindow.close();
         try {
-            executor.execute(builder,candidateText);
+            executor.execute(builder, candidateText);
         } catch (Exception e) {
             quickWindow.notifyError("Alert", e.getMessage());
         }

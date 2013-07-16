@@ -1,14 +1,13 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield.state;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.CandidatesProvider;
 import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.command.candidates.NotFound;
 import com.change_vision.astah.quick.command.candidates.ValidState;
 import com.change_vision.astah.quick.internal.command.CommandBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SelectArgument implements CandidateState {
 
@@ -31,7 +30,7 @@ public class SelectArgument implements CandidateState {
         if (committed instanceof CandidatesProvider) {
             CandidatesProvider provider = (CandidatesProvider) committed;
             Candidate[] committedCandidates = commandBuilder.getCandidates();
-            candidates = provider.candidate(committedCandidates,key);
+            candidates = provider.candidate(committedCandidates, key);
             if (candidates == null) {
                 return new Candidate[]{
                         new NotFound()
@@ -39,8 +38,8 @@ public class SelectArgument implements CandidateState {
             }
             return candidates;
         } else {
-            return new Candidate[] {
-                    new ValidState(committed,key)
+            return new Candidate[]{
+                    new ValidState(committed, key)
             };
         }
     }

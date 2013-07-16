@@ -1,17 +1,16 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.command.candidates.NotFound;
 import com.change_vision.astah.quick.internal.annotations.TestForMethod;
 import com.change_vision.astah.quick.internal.command.Commands;
 import com.change_vision.astah.quick.internal.command.model.SelectModelCommandFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectCommand implements CandidateState {
 
@@ -21,7 +20,7 @@ public class SelectCommand implements CandidateState {
     private static final Logger logger = LoggerFactory.getLogger(SelectCommand.class);
 
     private SelectModelCommandFactory commandFactory = new SelectModelCommandFactory();
-    
+
     private Commands commands;
 
     public SelectCommand(Commands commands) {
@@ -38,7 +37,7 @@ public class SelectCommand implements CandidateState {
                     candidates.add(command);
                 }
             }
-            return candidates.toArray(new Candidate[] {});
+            return candidates.toArray(new Candidate[]{});
         }
         for (Command command : commands.getCommands()) {
             String commandName = command.getName();
@@ -53,7 +52,7 @@ public class SelectCommand implements CandidateState {
         if (candidates.size() == 0) {
             candidates.add(new NotFound());
         }
-        return candidates.toArray(new Candidate[] {});
+        return candidates.toArray(new Candidate[]{});
     }
 
     private boolean isCandidate(String searchKey, String commandName) {

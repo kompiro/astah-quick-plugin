@@ -1,23 +1,17 @@
 package com.change_vision.astah.quick.internal.ui;
 
-import java.awt.AWTEvent;
-import java.awt.Component;
-import java.awt.KeyEventDispatcher;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JFrame;
-import javax.swing.KeyStroke;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.change_vision.astah.quick.internal.AstahAPIWrapper;
 import com.change_vision.astah.quick.internal.command.Commands;
 import com.change_vision.astah.quick.internal.model.QuickProperties;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 class OpenQuickWindowEventDispatcher implements KeyEventDispatcher {
 

@@ -1,17 +1,15 @@
 package com.change_vision.astah.quick.internal.ui;
 
-import java.awt.Color;
+import com.change_vision.astah.quick.internal.Messages;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
-import javax.swing.Timer;
-
-import com.change_vision.astah.quick.internal.Messages;
-
 @SuppressWarnings("serial")
 public class HelpField extends JLabel {
-    
+
     private final String[] messages = new String[]{
             Messages.getString("HelpField.cursor_message"), //$NON-NLS-1$
             Messages.getString("HelpField.enter_message"), //$NON-NLS-1$
@@ -19,7 +17,7 @@ public class HelpField extends JLabel {
             Messages.getString("HelpField.double_click_message"), //$NON-NLS-1$
             Messages.getString("HelpField.move_window_message"), //$NON-NLS-1$
     };
-    
+
 
     public HelpField() {
         setText(messages[0]);
@@ -37,5 +35,5 @@ public class HelpField extends JLabel {
         //        setFont(new Font("Dialog", Font.PLAIN, 12));
         setForeground(Color.darkGray.brighter());
     }
-    
+
 }

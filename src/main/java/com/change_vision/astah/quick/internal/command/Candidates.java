@@ -164,10 +164,6 @@ public class Candidates implements PropertyChangeListener {
         this.state = commandFactory.create();
     }
 
-    public CommandBuilder getCommandBuilder() {
-        return commandBuilder;
-    }
-
     public void reset() {
         this.state = commandFactory.create();
         this.commandBuilder.reset();

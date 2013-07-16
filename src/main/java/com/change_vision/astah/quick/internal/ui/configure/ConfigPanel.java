@@ -1,28 +1,21 @@
 package com.change_vision.astah.quick.internal.ui.configure;
 
-import java.awt.Font;
-
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import net.miginfocom.swing.MigLayout;
-
 import com.change_vision.astah.quick.internal.Messages;
 import com.change_vision.astah.quick.internal.model.QuickProperties;
+import net.miginfocom.swing.MigLayout;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class ConfigPanel extends JPanel {
-    
+
     private static final String LABEL_OF_CURRENT = Messages.getString("ConfigPanel.current_label"); //$NON-NLS-1$
     final private JDialog window;
     private JTextField keyField;
     private final QuickProperties properties = QuickProperties.getInstance();
-    
-    public ConfigPanel(JDialog window){
+
+    public ConfigPanel(JDialog window) {
         this.window = window;
         setLayout(new MigLayout("", "[][300px][][]", "[][]")); //$NON-NLS-1$
         Font font = getFont().deriveFont(20.0f);
@@ -56,5 +49,5 @@ public class ConfigPanel extends JPanel {
     public QuickProperties getProperties() {
         return this.properties;
     }
-    
+
 }

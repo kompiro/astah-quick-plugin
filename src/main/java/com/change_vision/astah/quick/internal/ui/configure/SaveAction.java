@@ -1,14 +1,11 @@
 package com.change_vision.astah.quick.internal.ui.configure;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JDialog;
-
+import com.change_vision.astah.quick.internal.model.QuickProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.change_vision.astah.quick.internal.model.QuickProperties;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 class SaveAction extends AbstractAction {
@@ -27,7 +24,7 @@ class SaveAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         String keyStroke = configPanel.getKeyStroke();
-        logger.trace("save:{}",keyStroke);
+        logger.trace("save:{}", keyStroke);
         QuickProperties properties = configPanel.getProperties();
         properties.setKeyStroke(keyStroke);
         properties.store();
@@ -35,5 +32,5 @@ class SaveAction extends AbstractAction {
         window.setVisible(false);
         window.dispose();
     }
-    
+
 }

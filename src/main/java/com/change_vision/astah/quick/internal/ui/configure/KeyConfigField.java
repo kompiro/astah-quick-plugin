@@ -1,21 +1,14 @@
 package com.change_vision.astah.quick.internal.ui.configure;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
-import javax.swing.text.Caret;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.text.Caret;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 @SuppressWarnings("serial")
 final class KeyConfigField extends JTextField {
@@ -23,7 +16,7 @@ final class KeyConfigField extends JTextField {
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(KeyConfigField.class);
-    
+
     private String defaultString;
 
     KeyConfigField(String defaultString) {
@@ -41,12 +34,12 @@ final class KeyConfigField extends JTextField {
                 JTextField source = (JTextField) e.getSource();
                 String strokeString = keyStroke.toString();
                 strokeString = strokeString.replace("pressed ", "");
-                logger.trace("pressed:{}",strokeString);
+                logger.trace("pressed:{}", strokeString);
                 source.setText(strokeString);
             }
         });
     }
-    
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -70,5 +63,5 @@ final class KeyConfigField extends JTextField {
             g.setColor(prevColor);
         }
     }
-    
+
 }

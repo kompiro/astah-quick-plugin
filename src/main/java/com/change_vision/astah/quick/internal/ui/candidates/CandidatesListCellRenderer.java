@@ -1,34 +1,21 @@
 package com.change_vision.astah.quick.internal.ui.candidates;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.CandidateIconDescription;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 final class CandidatesListCellRenderer implements ListCellRenderer {
-    
+
     private final class UnderLineBorder implements Border {
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D graphic = (Graphics2D) g.create();
-            graphic.setColor(new Color(224,224,224));
+            graphic.setColor(new Color(224, 224, 224));
             graphic.drawLine(x, y + c.getHeight() - 1, x + c.getWidth(), y + c.getHeight() - 1);
         }
 
@@ -42,16 +29,16 @@ final class CandidatesListCellRenderer implements ListCellRenderer {
             return new Insets(0, 0, 1, 0);
         }
     }
-    
+
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index,
-            boolean isSelected, boolean cellHasFocus) {
+                                                  boolean isSelected, boolean cellHasFocus) {
         JPanel panel = new JPanel();
         panel.setOpaque(true);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setComponentOrientation(list.getComponentOrientation());
-        CompoundBorder border = new CompoundBorder(new UnderLineBorder(),BorderFactory.createEmptyBorder(2, 5, 2, 0));
-        
+        CompoundBorder border = new CompoundBorder(new UnderLineBorder(), BorderFactory.createEmptyBorder(2, 5, 2, 0));
+
         panel.setBorder(border);
 
         if (isSelected) {
@@ -92,9 +79,9 @@ final class CandidatesListCellRenderer implements ListCellRenderer {
             Icon icon = iconDescription.getIcon();
             if (icon != null) {
                 int spaceAroundIcon = 2;
-                BufferedImage bi = new BufferedImage(icon.getIconWidth() ,icon.getIconHeight() + ( 2 * spaceAroundIcon), BufferedImage.TYPE_INT_ARGB);
+                BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight() + (2 * spaceAroundIcon), BufferedImage.TYPE_INT_ARGB);
                 Graphics g = bi.getGraphics();
-                icon.paintIcon(null, g, 0 , spaceAroundIcon * 2);
+                icon.paintIcon(null, g, 0, spaceAroundIcon * 2);
                 g.dispose();
                 title.setIcon(new ImageIcon(bi));
             }

@@ -1,14 +1,14 @@
 package com.change_vision.astah.quick.internal.ui.actions;
 
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import com.change_vision.astah.quick.internal.Activator;
 import com.change_vision.astah.quick.internal.ui.QuickInterfaceUI;
 import com.change_vision.astah.quick.internal.ui.configure.ConfigWindow;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
+
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ConfigureQuickAction implements IPluginActionDelegate {
 

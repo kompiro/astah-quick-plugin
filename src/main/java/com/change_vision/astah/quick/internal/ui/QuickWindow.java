@@ -1,20 +1,13 @@
 package com.change_vision.astah.quick.internal.ui;
 
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JWindow;
-import javax.swing.KeyStroke;
-
 import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.command.Commands;
+
+import javax.swing.*;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 @SuppressWarnings("serial")
 public class QuickWindow extends JWindow {
@@ -24,15 +17,15 @@ public class QuickWindow extends JWindow {
     public static boolean IS_MAC = isMac();
 
     private static boolean isWindows() {
-        return isOSNameMatch(OS_NAME,"Windows");
+        return isOSNameMatch(OS_NAME, "Windows");
     }
 
     private static boolean isMac() {
-        return isOSNameMatch(OS_NAME,"Mac");
+        return isOSNameMatch(OS_NAME, "Mac");
     }
-    
-    private static boolean isOSNameMatch(String osName, String osNamePrefix){
-        if(OS_NAME == null){
+
+    private static boolean isOSNameMatch(String osName, String osNamePrefix) {
+        if (OS_NAME == null) {
             return false;
         }
         return osName.startsWith(osNamePrefix);
@@ -43,7 +36,7 @@ public class QuickWindow extends JWindow {
     private final Candidates candidates;
     private final Commands commands;
 
-    public QuickWindow(JFrame parent,Commands commands) {
+    public QuickWindow(JFrame parent, Commands commands) {
         super(parent);
         this.commands = commands;
         this.notifier = new MessageNotifier(parent);
@@ -54,7 +47,7 @@ public class QuickWindow extends JWindow {
         CloseAction closeAction = new CloseAction(this);
         getRootPane().getActionMap().put("close-it", closeAction);
         this.candidates = new Candidates(this.commands, builder);
-        this.quickPanel = new QuickPanel(this, candidates);
+        this.quickPanel = new QuickPanel(this, candidates, builder);
         getContentPane().add(quickPanel);
         setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         pack();
@@ -83,5 +76,5 @@ public class QuickWindow extends JWindow {
         setVisible(true);
         quickPanel.opened();
     }
-    
+
 }

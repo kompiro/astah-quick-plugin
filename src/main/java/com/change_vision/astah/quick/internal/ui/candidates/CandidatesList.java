@@ -1,11 +1,11 @@
 package com.change_vision.astah.quick.internal.ui.candidates;
 
-import javax.swing.JList;
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 final class CandidatesList extends JList {
-	
-	CandidatesList(){
-		setCellRenderer(new CandidatesListCellRenderer());
-	}
+
+    CandidatesList() {
+        setCellRenderer(new CandidatesListCellRenderer());
+    }
 }

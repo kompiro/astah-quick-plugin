@@ -1,33 +1,32 @@
 package com.change_vision.astah.quick.internal.ui.candidates;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
-
-import java.awt.BorderLayout;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.MouseListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import com.change_vision.astah.quick.command.Candidate;
+import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.change_vision.astah.quick.command.Candidate;
-import com.change_vision.astah.quick.internal.command.Candidates;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.MouseListener;
+
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 @SuppressWarnings("serial")
 public class CandidatesListPanel extends JPanel {
 
-    private final class CandidateSelectionListener implements ListSelectionListener {
+    private final static class CandidateSelectionListener implements ListSelectionListener {
+        private final CandidatesList candidateList;
+        private final CandidatesSelector selector;
+
+        private CandidateSelectionListener(CandidatesList candidateList, CandidatesSelector selector) {
+            this.candidateList = candidateList;
+            this.selector = selector;
+        }
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int index = candidateList.getSelectedIndex();
@@ -40,17 +39,19 @@ public class CandidatesListPanel extends JPanel {
      */
     private static final Logger logger = LoggerFactory.getLogger(CandidatesListPanel.class);
 
-    private CandidatesList candidateList;
-    private CandidatesSelector selector;
+    private final Candidates candidates;
+    private final CandidatesList candidateList;
+    private final CandidatesSelector selector;
 
     private JScrollPane scrollPane;
 
-    public CandidatesListPanel(CandidatesSelector selector) {
+    public CandidatesListPanel(Candidates candidates, CandidatesSelector selector) {
+        this.candidateList = new CandidatesList();
         this.selector = selector;
+        this.candidates = candidates;
         scrollPane = new JScrollPane(VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setAutoscrolls(true);
-        candidateList = new CandidatesList();
-        candidateList.addListSelectionListener(new CandidateSelectionListener());
+        candidateList.addListSelectionListener(new CandidateSelectionListener(candidateList, selector));
         scrollPane.setViewportView(candidateList);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         setLayout(new BorderLayout());
@@ -73,7 +74,6 @@ public class CandidatesListPanel extends JPanel {
     }
 
     public void setCandidateText(String commandCandidateText) {
-        Candidates candidates = selector.getCandidatesObject();
         candidates.filter(commandCandidateText);
         selector.setCurrentIndex(0);
         Candidate[] candidatesData = candidates.getCandidates();
@@ -86,7 +86,7 @@ public class CandidatesListPanel extends JPanel {
 
     private void resetCandidateListIndex() {
         candidateList.setSelectedIndex(0);
-        scrollPane.getViewport().setViewPosition(new Point(0,0));
+        scrollPane.getViewport().setViewPosition(new Point(0, 0));
     }
 
     public void up() {
@@ -103,18 +103,18 @@ public class CandidatesListPanel extends JPanel {
         candidateList.setSelectedValue(candidate, true);
     }
 
-    public void resetIndex(){
+    public void resetIndex() {
         logger.trace("reset index");
         resetCandidateListIndex();
     }
 
     @Override
     public void setVisible(boolean visible) {
-        logger.trace("visible:{}",visible);
+        logger.trace("visible:{}", visible);
         super.setVisible(visible);
     }
-    
-    public void addMouseListener(MouseListener listener){
+
+    public void addMouseListener(MouseListener listener) {
         candidateList.addMouseListener(listener);
     }
 

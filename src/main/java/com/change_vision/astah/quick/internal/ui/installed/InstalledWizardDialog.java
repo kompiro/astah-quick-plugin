@@ -1,18 +1,14 @@
 package com.change_vision.astah.quick.internal.ui.installed;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-
-import javax.swing.JDialog;
-
 import com.change_vision.astah.quick.internal.Messages;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class InstalledWizardDialog extends JDialog {
 
-    public InstalledWizardDialog(Window window){
+    public InstalledWizardDialog(Window window) {
         super(window);
         setModalityType(ModalityType.APPLICATION_MODAL);
         InstalledWizardPanel panel = new InstalledWizardPanel(this);
