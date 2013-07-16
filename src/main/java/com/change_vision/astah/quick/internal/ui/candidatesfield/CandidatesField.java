@@ -32,15 +32,12 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
 
     private boolean settingText;
 
-    private final CandidatesSelector selector;
-
     private final CommandBuilder builder;
 
     public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList, Candidates candidates, CandidatesSelector selector, CommandBuilder builder) {
         this.quickWindow = quickWindow;
         this.candidatesList = candidatesList;
         this.candidates = candidates;
-        this.selector = selector;
         this.builder = builder;
         setFont(new Font("Dialog", Font.PLAIN, 32));
         setColumns(16);
