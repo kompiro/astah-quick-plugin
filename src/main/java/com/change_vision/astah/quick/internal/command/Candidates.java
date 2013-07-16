@@ -38,8 +38,6 @@ public class Candidates implements PropertyChangeListener {
         }
     }
 
-    public static final String PROP_STATE = "state"; //$NON-NLS-1$
-
     /**
      * Logger for this class
      */
@@ -50,8 +48,6 @@ public class Candidates implements PropertyChangeListener {
     private SelectCommandFactory commandFactory;
 
     private CandidateState state;
-
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     private final CommandBuilder commandBuilder;
 
@@ -137,9 +133,7 @@ public class Candidates implements PropertyChangeListener {
     }
 
     public void setState(CandidateState newState) {
-        CandidateState oldState = this.state;
         this.state = newState;
-        support.firePropertyChange(PROP_STATE, oldState, newState);
     }
 
     public CandidateState getState() {
@@ -155,14 +149,6 @@ public class Candidates implements PropertyChangeListener {
 
     public boolean isCommitted() {
         return commandBuilder.isCommitted();
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
     }
 
     @TestForMethod

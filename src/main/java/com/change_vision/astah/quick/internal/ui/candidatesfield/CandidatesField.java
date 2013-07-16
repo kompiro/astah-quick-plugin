@@ -17,7 +17,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 @SuppressWarnings("serial")
-public class CandidatesField extends JTextField implements PropertyChangeListener {
+public class CandidatesField extends JTextField {
 
     /**
      * Logger for this class
@@ -45,7 +45,6 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
         if (candidatesList == null) {
             return;
         }
-        candidates.addPropertyChangeListener(this);
         CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow, builder, selector);
         setAction(commandAction);
         new UpCandidatesListAction(this, this.candidatesList);
@@ -107,13 +106,6 @@ public class CandidatesField extends JTextField implements PropertyChangeListene
 
     private void closeCandidatesList() {
         logger.trace("closeCandidatesList");
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(Candidates.PROP_STATE)) {
-            evt.getOldValue();
-        }
     }
 
     public String getCandidateText() {
