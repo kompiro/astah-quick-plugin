@@ -12,6 +12,12 @@ import com.change_vision.astah.quick.internal.command.environment.EnvironmentCom
 import com.change_vision.astah.quick.internal.command.model.ModelCommands;
 import com.change_vision.astah.quick.internal.command.project.ProjectCommands;
 
+/**
+ * The set of Command for Astah Quick Plugin.<BR/>
+ *
+ * This class uses ServiceTracker to add the command registered by other plugin.<br/>
+ * It provides to add extension point for Astah Quick Plugin.
+ */
 public class Commands {
 
     private final List<Command> definedCommands = new ArrayList<Command>();
