@@ -25,11 +25,11 @@
   </appender>
 
 
-  <root level="TRACE">
-    <logger name="com.change_vision" level="${rootLevel:-OFF}">
+  <root level="OFF">
+  </root>
+  <logger name="com.change_vision.astah.quick" level="TRACE">
       <appender-ref ref="STDOUT" />
       <appender-ref ref="FILE" />
-    </logger>
-  </root>
+  </logger>
 
 </configuration>
