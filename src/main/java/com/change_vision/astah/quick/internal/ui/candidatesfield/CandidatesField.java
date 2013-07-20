@@ -108,8 +108,4 @@ public class CandidatesField extends JTextField {
         logger.trace("closeCandidatesList");
     }
 
-    public String getCandidateText() {
-        return builder.getCandidateText(getText());
-    }
-
 }
