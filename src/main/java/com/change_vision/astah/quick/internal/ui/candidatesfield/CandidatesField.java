@@ -1,7 +1,7 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield;
 
 import com.change_vision.astah.quick.internal.command.Candidates;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.ui.QuickWindow;
 import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
@@ -13,8 +13,6 @@ import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 @SuppressWarnings("serial")
 public class CandidatesField extends JTextField {
@@ -32,9 +30,9 @@ public class CandidatesField extends JTextField {
 
     private boolean settingText;
 
-    private final CommandBuilder builder;
+    private final CandidateHolder builder;
 
-    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList, Candidates candidates, CandidatesSelector selector, CommandBuilder builder) {
+    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList, Candidates candidates, CandidatesSelector selector, CandidateHolder builder) {
         this.quickWindow = quickWindow;
         this.candidatesList = candidatesList;
         this.candidates = candidates;

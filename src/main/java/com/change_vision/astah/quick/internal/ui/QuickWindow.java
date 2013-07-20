@@ -1,7 +1,7 @@
 package com.change_vision.astah.quick.internal.ui;
 
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.command.Commands;
 
 import javax.swing.*;
@@ -40,7 +40,7 @@ public class QuickWindow extends JWindow {
         super(parent);
         this.commands = commands;
         this.notifier = new MessageNotifier(parent);
-        final CommandBuilder builder = new CommandBuilder();
+        final CandidateHolder builder = new CandidateHolder();
         InputMap inputMap = getRootPane()
                 .getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close-it");

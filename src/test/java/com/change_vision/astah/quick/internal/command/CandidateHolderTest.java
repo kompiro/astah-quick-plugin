@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.Command;
 
-public class CommandBuilderTest {
+public class CandidateHolderTest {
     
     private static final String COMMAND_NAME = "create command";
     
@@ -35,7 +35,7 @@ public class CommandBuilderTest {
     @Mock
     private Candidate two;
 
-    private CommandBuilder builder;
+    private CandidateHolder builder;
 
     @Mock
     private PropertyChangeListener propertyChangeListener;
@@ -43,7 +43,7 @@ public class CommandBuilderTest {
     @Before
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
-        builder = new CommandBuilder();
+        builder = new CandidateHolder();
         when(command.getName()).thenReturn(COMMAND_NAME);
         when(one.getName()).thenReturn(CANDIDATE_ONE_NAME);
         when(two.getName()).thenReturn(CANDIDATE_TWO_NAME);
@@ -82,7 +82,7 @@ public class CommandBuilderTest {
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
-        assertThat(event.getPropertyName(),is(CommandBuilder.PROP_OF_COMMAND));
+        assertThat(event.getPropertyName(),is(CandidateHolder.PROP_OF_COMMAND));
     }
     
     @Test
@@ -108,7 +108,7 @@ public class CommandBuilderTest {
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
-        assertThat(event.getPropertyName(),is(CommandBuilder.PROP_OF_CANDIDATE));
+        assertThat(event.getPropertyName(),is(CandidateHolder.PROP_OF_CANDIDATE));
     }
     
     @Test
@@ -134,7 +134,7 @@ public class CommandBuilderTest {
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener,times(2)).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
-        assertThat(event.getPropertyName(),is(CommandBuilder.PROP_OF_CANDIDATE));
+        assertThat(event.getPropertyName(),is(CandidateHolder.PROP_OF_CANDIDATE));
     }
     
     @Test
@@ -166,7 +166,7 @@ public class CommandBuilderTest {
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
-        assertThat(event.getPropertyName(),is(CommandBuilder.PROP_OF_CANDIDATE));
+        assertThat(event.getPropertyName(),is(CandidateHolder.PROP_OF_CANDIDATE));
     }
 
     @Test
@@ -178,7 +178,7 @@ public class CommandBuilderTest {
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
-        assertThat(event.getPropertyName(),is(CommandBuilder.PROP_OF_COMMAND));
+        assertThat(event.getPropertyName(),is(CandidateHolder.PROP_OF_COMMAND));
     }
 
     @Test

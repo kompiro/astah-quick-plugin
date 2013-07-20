@@ -1,7 +1,7 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield;
 
 import com.change_vision.astah.quick.command.Candidate;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.ui.CandidateDecider;
 import com.change_vision.astah.quick.internal.ui.QuickWindow;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
@@ -22,9 +22,9 @@ final class CommitOrExecuteCommandAction extends AbstractAction {
 
     private final CandidatesSelector selector;
 
-    private final CommandBuilder builder;
+    private final CandidateHolder builder;
 
-    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow, CommandBuilder builder, CandidatesSelector selector) {
+    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow, CandidateHolder builder, CandidatesSelector selector) {
         super("commit-or-execute-command");
         this.decider = new CandidateDecider(quickWindow, field, builder);
         this.builder = builder;

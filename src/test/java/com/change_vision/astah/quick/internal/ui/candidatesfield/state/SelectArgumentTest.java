@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,7 +15,6 @@ import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.CandidatesProvider;
 import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.command.candidates.NotFound;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
 
 public class SelectArgumentTest {
 
@@ -29,7 +29,7 @@ public class SelectArgumentTest {
     private CandidatesProviderCommand providerCommand;
 
     @Mock
-    private CommandBuilder builder;
+    private CandidateHolder builder;
 
     private SelectArgument argument;
 

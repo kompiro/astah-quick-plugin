@@ -50,7 +50,7 @@ public class CommandExecutorTest {
     @Mock
     private ModelAPI api;
 
-    private CommandBuilder builder;
+    private CandidateHolder builder;
 
     @Before
     public void before() throws Exception {
@@ -62,7 +62,7 @@ public class CommandExecutorTest {
         when(one.getName()).thenReturn(CANDIDATE_ONE_NAME);
         when(two.getName()).thenReturn(CANDIDATE_TWO_NAME);
         when(selectModelCommand.getName()).thenReturn("Flight Engine");
-        builder = new CommandBuilder();
+        builder = new CandidateHolder();
     }
     
     @Test(expected=UncommitedCommandExcepition.class)

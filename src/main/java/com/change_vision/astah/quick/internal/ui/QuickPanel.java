@@ -3,8 +3,8 @@ package com.change_vision.astah.quick.internal.ui;
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.CandidateIconDescription;
 import com.change_vision.astah.quick.command.Command;
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
@@ -30,7 +30,7 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
         private final CandidatesSelector selector;
 
         private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,
-                                             CommandBuilder builder, CandidatesSelector selector) {
+                                             CandidateHolder builder, CandidatesSelector selector) {
             this.decider = new CandidateDecider(quickWindow, candidatesField, builder);
             this.selector = selector;
         }
@@ -50,7 +50,7 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
     private Icon astahIcon;
     private final CandidatesListPanel candidatesList;
 
-    public QuickPanel(final QuickWindow quickWindow, Candidates candidates, CommandBuilder builder) {
+    public QuickPanel(final QuickWindow quickWindow, Candidates candidates, CandidateHolder builder) {
         setLayout(new MigLayout("", "[32px][grow]", "[][][]"));
         CandidatesSelector selector = new CandidatesSelector(candidates);
         candidatesList = new CandidatesListPanel(candidates, selector);
@@ -88,7 +88,7 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(CommandBuilder.PROP_OF_COMMAND)) {
+        if (evt.getPropertyName().equals(CandidateHolder.PROP_OF_COMMAND)) {
             Object newValue = evt.getNewValue();
             if (newValue instanceof Command) {
                 Command command = (Command) newValue;

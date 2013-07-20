@@ -1,7 +1,7 @@
 package com.change_vision.astah.quick.internal.ui.candidatesfield;
 
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
 import org.slf4j.Logger;
@@ -24,13 +24,13 @@ final class CandidatesFieldDocumentListener implements DocumentListener {
 
     private final Candidates candidates;
 
-    private final CommandBuilder builder;
+    private final CandidateHolder builder;
 
     public CandidatesFieldDocumentListener(
             CandidatesField candidatesField,
             CandidatesListPanel candidatesList,
             Candidates candidates,
-            CommandBuilder builder) {
+            CandidateHolder builder) {
         this.field = candidatesField;
         this.candidatesList = candidatesList;
         this.candidates = candidates;

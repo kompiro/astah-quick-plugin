@@ -41,7 +41,7 @@ public class CandidatesTest {
     @Mock
     private CandidatesProviderCommand providerCommand;
 
-    private CommandBuilder commandBuilder;
+    private CandidateHolder candidateHolder;
 
     @Mock
     private ServiceTracker tracker;
@@ -75,8 +75,8 @@ public class CandidatesTest {
         when(second.getName()).thenReturn("EnumSet");
         when(third.getName()).thenReturn("EventListener");
 
-        commandBuilder = new CommandBuilder();
-        candidates = new Candidates(commands, commandBuilder);
+        candidateHolder = new CandidateHolder();
+        candidates = new Candidates(commands, candidateHolder);
         candidates.setCommandFactory(commandFactory);
     }
 
@@ -135,8 +135,8 @@ public class CandidatesTest {
 
     @Test
     public void filterWithNotFoundArgument() throws Exception {
-        commandBuilder.commit(providerCommand);
-        candidates.setState(new SelectArgument(commandBuilder));
+        candidateHolder.commit(providerCommand);
+        candidates.setState(new SelectArgument(candidateHolder));
         candidates.filter("not found");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual, is(notNullValue()));
@@ -152,7 +152,7 @@ public class CandidatesTest {
 
     @Test(expected = IllegalStateException.class)
     public void filterWithIllegalSelectArgument() throws Exception {
-        commandBuilder.commit(providerCommand);
+        candidateHolder.commit(providerCommand);
         CandidateState newState = mock(SelectArgument.class);
         candidates.setState(newState);
         candidates.filter("");
@@ -161,7 +161,7 @@ public class CandidatesTest {
     @Test
     public void changeStateWhenRemoveTheNameString() throws Exception {
         candidates.filter("new project");
-        commandBuilder.removeCandidate();
+        candidateHolder.removeCandidate();
         candidates.filter("new");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual.length, is(2));
@@ -172,7 +172,7 @@ public class CandidatesTest {
     @Test
     public void changeStateWhenResetTargetCommandName() throws Exception {
         candidates.filter("new project");
-        commandBuilder.removeCandidate();
+        candidateHolder.removeCandidate();
         candidates.filter("new");
         candidates.filter("new diagram");
         Candidate[] actual = candidates.getCandidates();
@@ -184,7 +184,7 @@ public class CandidatesTest {
     @Test
     public void changeStateWhenPasteIncludeSpaceNameString() throws Exception {
         candidates.filter("new project");
-        commandBuilder.removeCandidate();
+        candidateHolder.removeCandidate();
         candidates.filter("new           ");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual.length, is(2));
@@ -195,7 +195,7 @@ public class CandidatesTest {
     @Test
     public void changeStateWhenPasteIncludeTabNameString() throws Exception {
         candidates.filter("new project");
-        commandBuilder.removeCandidate();
+        candidateHolder.removeCandidate();
         candidates.filter("new\t\t\t");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual.length, is(2));
@@ -208,11 +208,11 @@ public class CandidatesTest {
         when(providerCommand.candidate((Candidate[]) any(), anyString())).thenReturn(new Candidate[]{
                 first
         });
-        commandBuilder.commit(providerCommand);
+        candidateHolder.commit(providerCommand);
         candidates.filter("Event");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual.length, is(1));
-        assertThat(commandBuilder.getCandidates().length, is(0));
+        assertThat(candidateHolder.getCandidates().length, is(0));
     }
 
     @Test
@@ -220,11 +220,11 @@ public class CandidatesTest {
         when(providerCommand.candidate((Candidate[]) any(), anyString())).thenReturn(new Candidate[]{
                 first
         });
-        commandBuilder.commit(providerCommand);
+        candidateHolder.commit(providerCommand);
         candidates.filter("EventObject ");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual.length, is(1));
-        assertThat(commandBuilder.getCandidates().length, is(1));
+        assertThat(candidateHolder.getCandidates().length, is(1));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class CandidatesTest {
         when(providerCommand.candidate((Candidate[]) any(), anyString())).thenReturn(new Candidate[]{
                 first, second, third
         });
-        commandBuilder.commit(providerCommand);
+        candidateHolder.commit(providerCommand);
         candidates.filter("");
         Candidate[] actual = candidates.getCandidates();
         assertThat(actual[0].getName(), is("EnumSet"));

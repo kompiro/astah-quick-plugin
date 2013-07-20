@@ -6,11 +6,10 @@ import com.change_vision.astah.quick.command.annotations.Immediate;
 import com.change_vision.astah.quick.command.candidates.InvalidState;
 import com.change_vision.astah.quick.command.candidates.ValidState;
 import com.change_vision.astah.quick.command.exception.ExecuteCommandException;
+import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
-import com.change_vision.astah.quick.internal.command.CommandBuilder;
 import com.change_vision.astah.quick.internal.command.CommandExecutor;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -39,7 +38,7 @@ public class CandidateDeciderTest {
     private Candidates candidates;
 
     @Mock
-    private CommandBuilder builder;
+    private CandidateHolder builder;
 
     @Mock
     private CommandExecutor executor;
@@ -85,7 +84,7 @@ public class CandidateDeciderTest {
         decider.decide(invalidState);
 
         verify(window,never()).close();
-        verify(executor,never()).execute(any(CommandBuilder.class), anyString());
+        verify(executor,never()).execute(any(CandidateHolder.class), anyString());
         verify(window,never()).notifyError(anyString(), anyString());
         verify(window,never()).reset();
     }
@@ -95,14 +94,14 @@ public class CandidateDeciderTest {
         decider.decide(validState);
 
         verify(window).close();
-        verify(executor).execute(any(CommandBuilder.class), anyString());
+        verify(executor).execute(any(CandidateHolder.class), anyString());
         verify(window,never()).notifyError(anyString(), anyString());
         verify(window).reset();
     }
 
     @Test
     public void decideWithValidStateWhenThrowExceptionInExecute() throws Exception {
-        doThrow(new RuntimeException()).when(executor).execute(any(CommandBuilder.class), anyString());
+        doThrow(new RuntimeException()).when(executor).execute(any(CandidateHolder.class), anyString());
         decider.decide(validState);
 
         verify(window).close();

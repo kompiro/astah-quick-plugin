@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -49,14 +48,14 @@ public class Candidates implements PropertyChangeListener {
 
     private CandidateState state;
 
-    private final CommandBuilder commandBuilder;
+    private final CandidateHolder candidateHolder;
 
     private Candidate[] candidates = new Candidate[0];
 
-    public Candidates(Commands commands, CommandBuilder commandBuilder) {
+    public Candidates(Commands commands, CandidateHolder candidateHolder) {
         this.commands = commands;
-        this.commandBuilder = commandBuilder;
-        this.commandBuilder.addPropertyChangeListener(this);
+        this.candidateHolder = candidateHolder;
+        this.candidateHolder.addPropertyChangeListener(this);
         this.commandFactory = new SelectCommandFactory(commands);
         this.state = commandFactory.create();
     }
@@ -73,15 +72,15 @@ public class Candidates implements PropertyChangeListener {
         if (isChangedArgumentState(key, candidates)) {
             logger.trace("change argument state");
             Command committed = (Command) candidates[0];
-            if (commandBuilder.isCommitted() == false) {
-                commandBuilder.commit(committed);
+            if (candidateHolder.isCommitted() == false) {
+                candidateHolder.commit(committed);
             }
             // re-filtering
             this.candidates = doFilter(searchKey);
             return;
         }
         if (isCommitCandidate(key, candidates)) {
-            commandBuilder.add(candidates[0]);
+            candidateHolder.add(candidates[0]);
         }
     }
 
@@ -97,7 +96,7 @@ public class Candidates implements PropertyChangeListener {
     private void illegalStateOfCandidatesAreNull() {
         String className = state.getClass().getSimpleName();
         if (state instanceof SelectArgument) {
-            className = commandBuilder.getCommand().getClass().getSimpleName();
+            className = candidateHolder.getCommand().getClass().getSimpleName();
         }
         String message = format("state returns null candidates. %s", className);
         throw new IllegalStateException(message);
@@ -125,11 +124,11 @@ public class Candidates implements PropertyChangeListener {
         Command committed = (Command) candidates[0];
         String commandName = committed.getName().toLowerCase();
         boolean isCommittedByKey = key.startsWith(commandName);
-        return isCurrentCommandState && isFoundOnlyOneCommand && (isCommittedByKey || commandBuilder.isCommitted());
+        return isCurrentCommandState && isFoundOnlyOneCommand && (isCommittedByKey || candidateHolder.isCommitted());
     }
 
     private boolean isChangedToCommandState(String key) {
-        return (state instanceof SelectArgument) && commandBuilder.isCommitted() == false;
+        return (state instanceof SelectArgument) && candidateHolder.isCommitted() == false;
     }
 
     public void setState(CandidateState newState) {
@@ -148,7 +147,7 @@ public class Candidates implements PropertyChangeListener {
     }
 
     public boolean isCommitted() {
-        return commandBuilder.isCommitted();
+        return candidateHolder.isCommitted();
     }
 
     @TestForMethod
@@ -159,14 +158,14 @@ public class Candidates implements PropertyChangeListener {
 
     public void reset() {
         this.state = commandFactory.create();
-        this.commandBuilder.reset();
+        this.candidateHolder.reset();
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
-        if (propertyName.equals(CommandBuilder.PROP_OF_COMMAND)) {
-            SelectArgument newState = new SelectArgument(commandBuilder);
+        if (propertyName.equals(CandidateHolder.PROP_OF_COMMAND)) {
+            SelectArgument newState = new SelectArgument(candidateHolder);
             setState(newState);
         }
     }

@@ -19,7 +19,7 @@ public class CommandExecutor {
      */
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
-    public void execute(CommandBuilder builder,String candidateText) throws UncommitedCommandExcepition, ExecuteCommandException {
+    public void execute(CandidateHolder builder,String candidateText) throws UncommitedCommandExcepition, ExecuteCommandException {
         logger.trace("execute:'{}'",candidateText); //$NON-NLS-1$
         if (builder.isUncommited()) throw new UncommitedCommandExcepition();
         candidateText = candidateText.trim();
@@ -28,7 +28,7 @@ public class CommandExecutor {
         builder.reset();
     }
 
-    private void doExcecute(CommandBuilder builder,String candidateText) throws ExecuteCommandException {
+    private void doExcecute(CandidateHolder builder,String candidateText) throws ExecuteCommandException {
         Command command = builder.getCommand();
         Candidate[] candidates = builder.getCandidates();
         if (candidates.length == 0) {
@@ -86,7 +86,7 @@ public class CommandExecutor {
         return args;
     }
 
-    public boolean isValid(CommandBuilder builder) {
+    public boolean isValid(CandidateHolder builder) {
         return builder.isCommitted();
     }
     

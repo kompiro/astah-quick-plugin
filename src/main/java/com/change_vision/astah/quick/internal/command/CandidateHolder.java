@@ -11,7 +11,7 @@ import com.change_vision.astah.quick.command.CandidateSupportCommand;
 import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.command.annotations.Immediate;
 
-public class CommandBuilder {
+public class CandidateHolder {
     public static final String PROP_OF_COMMAND = "command"; //$NON-NLS-1$
     public static final String PROP_OF_CANDIDATE = "candidate"; //$NON-NLS-1$
     public static final String SEPARATE_COMMAND_CHAR = " "; //$NON-NLS-1$
@@ -50,7 +50,7 @@ public class CommandBuilder {
 
     @Override
     public String toString() {
-        return "CommandBuilder [command=" + command + ", candidates=" + candidates + "]";//$NON-NLS-1$
+        return "CandidateHolder [command=" + command + ", candidates=" + candidates + "]";//$NON-NLS-1$
     }
 
     public Candidate removeCandidate() {
