@@ -24,17 +24,20 @@ final class CandidatesFieldDocumentListener implements DocumentListener {
 
     private final Candidates candidates;
 
-    private final CandidateHolder builder;
+    private final CandidateHolder holder;
+
+    private final CandidateTextParser parser;
 
     public CandidatesFieldDocumentListener(
             CandidatesField candidatesField,
             CandidatesListPanel candidatesList,
             Candidates candidates,
-            CandidateHolder builder) {
+            CandidateHolder holder) {
         this.field = candidatesField;
         this.candidatesList = candidatesList;
         this.candidates = candidates;
-        this.builder = builder;
+        this.holder = holder;
+        this.parser = new CandidateTextParser(holder);
     }
 
     @Override
@@ -53,22 +56,22 @@ final class CandidatesFieldDocumentListener implements DocumentListener {
     public void removeUpdate(DocumentEvent e) {
         logger.trace("removeUpdate");
         Document document = e.getDocument();
-        String commandText = builder.getCommandText();
+        String commandText = holder.getCommandText();
         String text = getText(document);
         if (text.isEmpty() == false && commandText.length() > text.length()) {
-            builder.removeCandidate();
+            holder.removeCandidate();
         }
         if (text.isEmpty() && field.isSettingText() == false) {
-            builder.reset();
+            holder.reset();
         }
-        String candidateText = builder.getCandidateText(text);
+        String candidateText = parser.getCandidateText(text);
         candidatesList.setCandidateText(candidateText);
     }
 
     private void handleCandidatesList(DocumentEvent event) {
         Document document = event.getDocument();
         String text =  getText(document);
-        String candidateText = builder.getCandidateText(text);
+        String candidateText = parser.getCandidateText(text);
         candidatesList.setCandidateText(candidateText);
         if (isNullOrEmpty(candidateText)) {
             if (isNullOrEmpty(text)) {

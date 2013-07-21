@@ -35,7 +35,7 @@ public class CandidateHolderTest {
     @Mock
     private Candidate two;
 
-    private CandidateHolder builder;
+    private CandidateHolder holder;
 
     @Mock
     private PropertyChangeListener propertyChangeListener;
@@ -43,7 +43,7 @@ public class CandidateHolderTest {
     @Before
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
-        builder = new CandidateHolder();
+        holder = new CandidateHolder();
         when(command.getName()).thenReturn(COMMAND_NAME);
         when(one.getName()).thenReturn(CANDIDATE_ONE_NAME);
         when(two.getName()).thenReturn(CANDIDATE_TWO_NAME);
@@ -52,33 +52,33 @@ public class CandidateHolderTest {
     
     @Test
     public void init() throws Exception {
-        Command actual = builder.getCommand();
-        assertThat(actual,is(nullValue()));
-        assertThat(builder.isCommitted(),is(false));
-        Candidate[] candidates = builder.getCandidates();
+        Command actual = holder.getCommand();
+        assertThat(actual, is(nullValue()));
+        assertThat(holder.isCommitted(),is(false));
+        Candidate[] candidates = holder.getCandidates();
         assertThat(candidates,is(notNullValue()));
         assertThat(candidates.length,is(0));
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void commitWithNull() throws Exception {
-        builder.commit(null);
+        holder.commit(null);
     }
 
     @Test
     public void commitAndGetCommand() {
-        builder.commit(command);
-        Command actual = builder.getCommand();
-        assertThat(actual,is(notNullValue()));
-        assertThat(builder.isCommitted(),is(true));
-        assertThat(builder.getCommandText(),is(COMMAND_NAME));
+        holder.commit(command);
+        Command actual = holder.getCommand();
+        assertThat(actual, is(notNullValue()));
+        assertThat(holder.isCommitted(),is(true));
+        assertThat(holder.getCommandText(),is(COMMAND_NAME));
 
     }
     
     @Test
     public void receivePropertyChangeByCommit() throws Exception {
-        builder.addPropertyChangeListener(propertyChangeListener);
-        builder.commit(command);
+        holder.addPropertyChangeListener(propertyChangeListener);
+        holder.commit(command);
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
@@ -87,24 +87,24 @@ public class CandidateHolderTest {
     
     @Test
     public void addCandidate() throws Exception {
-        builder.commit(command);
-        builder.add(one);
-        Candidate[] candidates = builder.getCandidates();
-        assertThat(candidates,is(notNullValue()));
+        holder.commit(command);
+        holder.add(one);
+        Candidate[] candidates = holder.getCandidates();
+        assertThat(candidates, is(notNullValue()));
         assertThat(candidates.length,is(1));
-        assertThat(builder.getCommandText(),is(COMMAND_NAME + COMMAND_SEPARATOR + CANDIDATE_ONE_NAME));
+        assertThat(holder.getCommandText(),is(COMMAND_NAME + COMMAND_SEPARATOR + CANDIDATE_ONE_NAME));
 
-        builder.add(two);
-        candidates = builder.getCandidates();
-        assertThat(candidates,is(notNullValue()));
+        holder.add(two);
+        candidates = holder.getCandidates();
+        assertThat(candidates, is(notNullValue()));
         assertThat(candidates.length,is(2));
-        assertThat(builder.getCommandText(),is(COMMAND_NAME + COMMAND_SEPARATOR + CANDIDATE_ONE_NAME + COMMAND_SEPARATOR + CANDIDATE_TWO_NAME));
+        assertThat(holder.getCommandText(), is(COMMAND_NAME + COMMAND_SEPARATOR + CANDIDATE_ONE_NAME + COMMAND_SEPARATOR + CANDIDATE_TWO_NAME));
     }
 
     @Test
     public void receivePropertyChangeByAdd() throws Exception {
-        builder.addPropertyChangeListener(propertyChangeListener);
-        builder.add(one);
+        holder.addPropertyChangeListener(propertyChangeListener);
+        holder.add(one);
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
@@ -113,24 +113,24 @@ public class CandidateHolderTest {
     
     @Test
     public void removeACandidate() throws Exception {
-        builder.add(one);
-        builder.remove(one);
-        Candidate[] candidates = builder.getCandidates();
+        holder.add(one);
+        holder.remove(one);
+        Candidate[] candidates = holder.getCandidates();
         assertThat(candidates,is(notNullValue()));
         assertThat(candidates.length,is(0));
     }
     
     @Test
     public void removeCandidateNotContained() throws Exception {
-        boolean remove = builder.remove(one);
+        boolean remove = holder.remove(one);
         assertThat(remove,is(false));
     }
     
     @Test
     public void receivePropertyChangeByRemove() throws Exception {
-        builder.addPropertyChangeListener(propertyChangeListener);
-        builder.add(one);
-        builder.remove(one);
+        holder.addPropertyChangeListener(propertyChangeListener);
+        holder.add(one);
+        holder.remove(one);
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener,times(2)).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
@@ -139,30 +139,30 @@ public class CandidateHolderTest {
     
     @Test
     public void removeCandidate() throws Exception {
-        builder.commit(command);
-        builder.add(one);
-        builder.add(two);
-        builder.removeCandidate();
-        assertThat(builder.getCommand(),is(notNullValue()));
-        Candidate[] candidates = builder.getCandidates();
+        holder.commit(command);
+        holder.add(one);
+        holder.add(two);
+        holder.removeCandidate();
+        assertThat(holder.getCommand(),is(notNullValue()));
+        Candidate[] candidates = holder.getCandidates();
         assertThat(candidates,is(notNullValue()));
-        assertThat(candidates.length,is(1));
+        assertThat(candidates.length, is(1));
         assertThat(candidates[0],is(one));
-        builder.removeCandidate();
-        candidates = builder.getCandidates();
-        assertThat(builder.getCommand(),is(notNullValue()));
+        holder.removeCandidate();
+        candidates = holder.getCandidates();
+        assertThat(holder.getCommand(), is(notNullValue()));
         assertThat(candidates,is(notNullValue()));
-        assertThat(candidates.length,is(0));
-        builder.removeCandidate();
-        assertThat(builder.getCommand(),is(nullValue()));
+        assertThat(candidates.length, is(0));
+        holder.removeCandidate();
+        assertThat(holder.getCommand(),is(nullValue()));
     }
     
     @Test
     public void removeCandidate_candidateFirePropertyChangeEvent() throws Exception {
-        builder.commit(command);
-        builder.add(one);
-        builder.addPropertyChangeListener(propertyChangeListener); // start to receive event
-        builder.removeCandidate();
+        holder.commit(command);
+        holder.add(one);
+        holder.addPropertyChangeListener(propertyChangeListener); // start to receive event
+        holder.removeCandidate();
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
@@ -171,49 +171,14 @@ public class CandidateHolderTest {
 
     @Test
     public void removeCandidate_commandFirePropertyChangeEvent() throws Exception {
-        builder.commit(command);
+        holder.commit(command);
 
-        builder.addPropertyChangeListener(propertyChangeListener); // start to receive event
-        builder.removeCandidate();
+        holder.addPropertyChangeListener(propertyChangeListener); // start to receive event
+        holder.removeCandidate();
         ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
         verify(propertyChangeListener).propertyChange(captor.capture());
         PropertyChangeEvent event = captor.getValue();
         assertThat(event.getPropertyName(),is(CandidateHolder.PROP_OF_COMMAND));
     }
-
-    @Test
-    public void candidateTextWhenUncommitted() throws Exception {
-        String candidateText = builder.getCandidateText("hoge");
-        assertThat(candidateText,is("hoge"));
-    }
-
-    @Test
-    public void candidateTextWhenCommitted() throws Exception {
-        builder.commit(command);
-        String candidateText = builder.getCandidateText(COMMAND_NAME);
-        assertThat(candidateText,is(""));
-    }
-    
-    @Test
-    public void candidateTextWhenCommittedAndSpace() throws Exception {
-        builder.commit(command);
-        String candidateText = builder.getCandidateText(COMMAND_NAME + COMMAND_SEPARATOR);
-        assertThat(candidateText,is(COMMAND_SEPARATOR));
-    }
-
-    @Test
-    public void candidateTextAfterCommitted() throws Exception {
-        builder.commit(command);
-        String candidateText = builder.getCandidateText(COMMAND_NAME + COMMAND_SEPARATOR + "hoge");
-        assertThat(candidateText,is("hoge"));
-    }
-    
-    @Test
-    public void candidateTextHasSpaceSequence() throws Exception {
-        builder.commit(command);
-        String candidateText = builder.getCandidateText(COMMAND_NAME + COMMAND_SEPARATOR + COMMAND_SEPARATOR + "hoge");
-        assertThat(candidateText,is("hoge"));
-    }
-
 
 }

@@ -71,29 +71,6 @@ public class CandidateHolder {
         return candidate;
     }
 
-    public String getCandidateText(String candidateText) {
-        if (isUncommited()) {
-            return candidateText;
-        }
-        Command command = getCommand();
-        String commandName = command.getName();
-        String[] commandWords = commandName.split(SEPARATE_COMMAND_CHAR);
-        String[] candidateWords = candidateText.split(SEPARATE_COMMAND_CHAR);
-        if (candidateWords.length > commandWords.length) {
-            StringBuilder builder = new StringBuilder();
-            for(int i = commandWords.length; i < candidateWords.length; i++){
-                builder.append(candidateWords[i]);
-                builder.append(SEPARATE_COMMAND_CHAR);
-            }
-            return builder.toString().trim();
-        }
-        if (candidateText.length() > commandName.length()) {
-            return candidateText.substring(commandName.length());
-        }
-        return ""; //$NON-NLS-1$
-    }
-    
-
     public String getCommandText() {
         if (isUncommited()) {
             return ""; //$NON-NLS-1$
