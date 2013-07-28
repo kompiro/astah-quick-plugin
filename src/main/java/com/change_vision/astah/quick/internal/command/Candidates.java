@@ -128,10 +128,12 @@ public class Candidates implements PropertyChangeListener {
     }
 
     private boolean isChangedToCommandState(String key) {
+        logger.trace("isChangedToCommandState:'{}'",key);
         return (state instanceof SelectArgument) && candidateHolder.isCommitted() == false;
     }
 
     public void setState(CandidateState newState) {
+        logger.trace("change state : '{}'",newState);
         this.state = newState;
     }
 
@@ -165,8 +167,14 @@ public class Candidates implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
         if (propertyName.equals(CandidateHolder.PROP_OF_COMMAND)) {
-            SelectArgument newState = new SelectArgument(candidateHolder);
-            setState(newState);
+            if(evt.getNewValue() != null) {
+                SelectArgument newState = new SelectArgument(candidateHolder);
+                setState(newState);
+                filter("");
+            }
+        }
+        if (propertyName.equals(CandidateHolder.PROP_OF_CANDIDATE)) {
+            filter("");
         }
     }
 

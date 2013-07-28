@@ -6,6 +6,7 @@ import com.change_vision.astah.quick.command.Command;
 import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidateAutoCompleteDocument;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
@@ -25,13 +26,15 @@ import java.net.URL;
 @SuppressWarnings("serial")
 public class QuickPanel extends JPanel implements PropertyChangeListener {
 
+    private final Candidates candidates;
+
     private static final class CandidateDoubleClickListener extends MouseAdapter {
         private final CandidateDecider decider;
         private final CandidatesSelector selector;
 
-        private CandidateDoubleClickListener(QuickWindow quickWindow, CandidatesField candidatesField,
+        private CandidateDoubleClickListener(QuickWindow quickWindow, CandidateAutoCompleteDocument document,
                                              CandidateHolder builder, CandidatesSelector selector) {
-            this.decider = new CandidateDecider(quickWindow, candidatesField, builder);
+            this.decider = new CandidateDecider(quickWindow, document, builder);
             this.selector = selector;
         }
 
@@ -51,6 +54,7 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
     private final CandidatesListPanel candidatesList;
 
     public QuickPanel(final QuickWindow quickWindow, Candidates candidates, CandidateHolder builder) {
+        this.candidates = candidates;
         setLayout(new MigLayout("", "[32px][grow]", "[][][]"));
         CandidatesSelector selector = new CandidatesSelector(candidates);
         candidatesList = new CandidatesListPanel(candidates, selector);
@@ -71,19 +75,19 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
 //        helpField = new HelpField();
 //        add(helpField, "cell 1 1,growx");
         add(candidatesList, "cell 0 2,span 2,growx");
-
-        candidatesList.addMouseListener(new CandidateDoubleClickListener(quickWindow, candidatesField, builder, selector));
+        CandidateAutoCompleteDocument document = (CandidateAutoCompleteDocument) candidatesField.getDocument();
+        candidatesList.addMouseListener(new CandidateDoubleClickListener(quickWindow, document, builder, selector));
     }
 
     public void opened() {
-        candidatesList.setCandidateText("");
-        candidatesField.setWindowState(CandidateWindowState.Inputing);
+        candidates.filter("");
+        candidatesList.update();
     }
 
     public void reset() {
         iconLabel.setIcon(astahIcon);
         candidatesField.setText("");
-        candidatesField.setWindowState(CandidateWindowState.Wait);
+        candidatesList.update();
     }
 
     @Override
@@ -109,8 +113,8 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
         iconLabel.setIcon(new ImageIcon(bufferedImage));
     }
 
-    public CandidatesListPanel getCandidatesList() {
-        return this.candidatesList;
-    }
+//    public CandidatesListPanel getCandidatesList() {
+//        return this.candidatesList;
+//    }
 
 }

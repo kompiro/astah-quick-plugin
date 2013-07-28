@@ -43,61 +43,23 @@ final class CandidatesFieldDocumentListener implements DocumentListener {
     @Override
     public void insertUpdate(DocumentEvent e) {
         logger.trace("insertUpdate");
-        handleCandidatesList(e);
+        handleCandidatesList();
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
         logger.trace("changedUpdate");
-        handleCandidatesList(e);
+        handleCandidatesList();
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         logger.trace("removeUpdate");
-        Document document = e.getDocument();
-        String commandText = holder.getCommandText();
-        String text = getText(document);
-        if (text.isEmpty() == false && commandText.length() > text.length()) {
-            holder.removeCandidate();
-        }
-        if (text.isEmpty() && field.isSettingText() == false) {
-            holder.reset();
-        }
-        String candidateText = parser.getCandidateText(text);
-        candidatesList.setCandidateText(candidateText);
+        handleCandidatesList();
     }
 
-    private void handleCandidatesList(DocumentEvent event) {
-        Document document = event.getDocument();
-        String text =  getText(document);
-        String candidateText = parser.getCandidateText(text);
-        candidatesList.setCandidateText(candidateText);
-        if (isNullOrEmpty(candidateText)) {
-            if (isNullOrEmpty(text)) {
-                field.setWindowState(CandidateWindowState.ArgumentWait);
-            } else {
-                field.setWindowState(CandidateWindowState.Wait);
-            }
-        } else {
-            if (isNullOrEmpty(text)) {
-                field.setWindowState(CandidateWindowState.ArgumentInputing);
-            } else {
-                field.setWindowState(CandidateWindowState.Inputing);
-            }
-        }
-    }
-
-    private boolean isNullOrEmpty(String string) {
-        return string == null || string.isEmpty();
-    }
-
-    private String getText(Document document){
-        try {
-            return document.getText(0,document.getLength());
-        } catch (BadLocationException e) {
-            return "";
-        }
+    private void handleCandidatesList() {
+        candidatesList.update();
     }
 
 }

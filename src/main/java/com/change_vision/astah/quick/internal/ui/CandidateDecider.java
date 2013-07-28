@@ -7,30 +7,40 @@ import com.change_vision.astah.quick.command.candidates.InvalidState;
 import com.change_vision.astah.quick.command.candidates.ValidState;
 import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.CommandExecutor;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidateAutoCompleteDocument;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 public class CandidateDecider {
 
     private final QuickWindow quickWindow;
-    private final CandidatesField candidatesField;
-    private final CandidateHolder builder;
+    private final CandidateAutoCompleteDocument doc;
+    private final CandidateHolder holder;
     private final CommandExecutor executor;
 
-    public CandidateDecider(QuickWindow quickWindow, CandidatesField field, CandidateHolder builder) {
+    private static final Logger logger = LoggerFactory.getLogger(CandidateDecider.class);
+
+    public CandidateDecider(QuickWindow quickWindow, CandidateAutoCompleteDocument doc, CandidateHolder holder) {
         this.quickWindow = quickWindow;
-        this.candidatesField = field;
-        this.builder = builder;
+        this.doc = doc;
+        this.holder = holder;
         this.executor = new CommandExecutor();
     }
 
-    CandidateDecider(QuickWindow quickWindow, CandidatesField field, CandidateHolder builder, CommandExecutor executor) {
+    CandidateDecider(QuickWindow quickWindow, CandidateAutoCompleteDocument doc, CandidateHolder holder, CommandExecutor executor) {
         this.quickWindow = quickWindow;
-        this.candidatesField = field;
-        this.builder = builder;
+        this.doc = doc;
+        this.holder = holder;
         this.executor = executor;
     }
 
     public void decide(Candidate candidate) {
+        logger.trace("decide:{}",candidate);
         if (candidate == null) {
             throw new IllegalArgumentException("candidate is null");
         }
@@ -38,42 +48,40 @@ public class CandidateDecider {
             return;
         }
         if (candidate instanceof ValidState) {
-            executeCommand(builder);
+            executeCommand(holder);
             return;
         }
 
         boolean decided = false;
-        decided |= decideCandidate(builder, candidate);
+        decided |= decideCandidate(holder, candidate);
         if (decided) return;
-        decided |= decideCommand(builder, candidate);
+        decided |= decideCommand(holder, candidate);
         if (decided) return;
         throw new IllegalStateException("candidate is not command " + candidate);
     }
 
-    private boolean decideCandidate(CandidateHolder builder, Candidate candidate) {
-        if (builder.isCommitted()) {
+    private boolean decideCandidate(CandidateHolder holder, Candidate candidate) {
+        if (holder.isCommitted()) {
             if (candidate instanceof Command) {
                 throw new IllegalArgumentException("command is committed but candidate specify command. maybe it is bug.");
             }
-            builder.add(candidate);
-            String commandText = builder.getCommandText() + CommandExecutor.SEPARATE_COMMAND_CHAR;
-            candidatesField.setText(commandText);
+            holder.add(candidate);
+            doc.commit();
             if (isImmidiateCandidate(candidate)) {
-                executeCommand(builder);
+                executeCommand(holder);
             }
             return true;
         }
         return false;
     }
 
-    private boolean decideCommand(CandidateHolder builder, Candidate candidate) {
+    private boolean decideCommand(CandidateHolder holder, Candidate candidate) {
         if (candidate instanceof Command) {
             Command command = (Command) candidate;
-            builder.commit(command);
-            String commandText = builder.getCommandText() + CommandExecutor.SEPARATE_COMMAND_CHAR;
-            candidatesField.setText(commandText);
+            holder.commit(command);
+            doc.commit();
             if (isImmidiateCommand(command)) {
-                executeCommand(builder);
+                executeCommand(holder);
             }
             return true;
         }
@@ -88,12 +96,12 @@ public class CandidateDecider {
         return command.getClass().isAnnotationPresent(Immediate.class);
     }
 
-    private void executeCommand(CandidateHolder builder) {
-        String candidateText = candidatesField.getText();
+    private void executeCommand(CandidateHolder holder) {
         quickWindow.close();
         try {
-            executor.execute(builder, candidateText);
+            executor.execute(holder, doc.getText(0,doc.getLength()));
         } catch (Exception e) {
+            logger.warn("Exception occurred when command execution.",e);
             quickWindow.notifyError("Alert", e.getMessage());
         }
         quickWindow.reset();

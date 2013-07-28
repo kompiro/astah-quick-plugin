@@ -22,12 +22,9 @@ final class CommitOrExecuteCommandAction extends AbstractAction {
 
     private final CandidatesSelector selector;
 
-    private final CandidateHolder builder;
-
-    CommitOrExecuteCommandAction(CandidatesField field, QuickWindow quickWindow, CandidateHolder builder, CandidatesSelector selector) {
+    CommitOrExecuteCommandAction(CandidateAutoCompleteDocument doc, QuickWindow quickWindow, CandidateHolder builder, CandidatesSelector selector) {
         super("commit-or-execute-command");
-        this.decider = new CandidateDecider(quickWindow, field, builder);
-        this.builder = builder;
+        this.decider = new CandidateDecider(quickWindow, doc, builder);
         this.selector = selector;
     }
 

@@ -21,7 +21,7 @@ public class CommandExecutor {
 
     public void execute(CandidateHolder builder,String candidateText) throws UncommitedCommandExcepition, ExecuteCommandException {
         logger.trace("execute:'{}'",candidateText); //$NON-NLS-1$
-        if (builder.isUncommited()) throw new UncommitedCommandExcepition();
+        if (builder.isUncommited()) throw new UncommitedCommandExcepition("command is not committed.");
         candidateText = candidateText.trim();
         candidateText = candidateText.replaceAll("\\s+", SEPARATE_COMMAND_CHAR); //$NON-NLS-1$
         doExcecute(builder,candidateText);

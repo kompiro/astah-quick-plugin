@@ -8,6 +8,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.StyleConstants;
 
+/**
+ * Inhibit input to CandidatesField when input conversion.
+ */
 final class CandidatesFieldDocumentFilter extends DocumentFilter {
     /**
      * Logger for this class

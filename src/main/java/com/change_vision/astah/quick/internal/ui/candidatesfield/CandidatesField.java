@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.Document;
 import java.awt.*;
 
 @SuppressWarnings("serial")
@@ -30,53 +28,51 @@ public class CandidatesField extends JTextField {
 
     private boolean settingText;
 
-    private final CandidateHolder builder;
+    private final CandidateHolder holder;
 
-    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList, Candidates candidates, CandidatesSelector selector, CandidateHolder builder) {
+    public CandidatesField(QuickWindow quickWindow, CandidatesListPanel candidatesList, Candidates candidates, CandidatesSelector selector, CandidateHolder holder) {
         this.quickWindow = quickWindow;
         this.candidatesList = candidatesList;
         this.candidates = candidates;
-        this.builder = builder;
+        this.holder = holder;
         setFont(new Font("Dialog", Font.PLAIN, 32));
         setColumns(16);
         setEditable(true);
         if (candidatesList == null) {
             return;
         }
-        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(this, this.quickWindow, builder, selector);
+        CandidateAutoCompleteDocument document = new CandidateAutoCompleteDocument(this, candidates, holder);
+//        document.setDocumentFilter(new CandidatesFieldDocumentFilter());
+        CandidatesFieldDocumentListener listener = new CandidatesFieldDocumentListener(this,
+                this.candidatesList, candidates, holder);
+        document.addDocumentListener(listener);
+        setDocument(document);
+        CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(document, this.quickWindow, holder, selector);
         setAction(commandAction);
         new UpCandidatesListAction(this, this.candidatesList);
         new DownCandidatesListAction(this, this.candidatesList);
 
-        CandidatesFieldDocumentListener listener = new CandidatesFieldDocumentListener(this,
-                this.candidatesList, candidates, builder);
 
-        Document document = getDocument();
-        if (document instanceof AbstractDocument) {
-            AbstractDocument abstractDocument = (AbstractDocument) document;
-            abstractDocument.setDocumentFilter(new CandidatesFieldDocumentFilter());
-        }
-        document.addDocumentListener(listener);
     }
 
-    public void setWindowState(CandidateWindowState windowState) {
-        switch (windowState) {
-            case Inputing:
-                openCandidatesList();
-                break;
-            case Wait:
-                closeCandidatesListAndReset();
-                break;
-            case ArgumentInputing:
-                openCandidatesList();
-                break;
-            case ArgumentWait:
-                closeCandidatesList();
-                break;
-            default:
-                throw new IllegalStateException("Illegal state of window: '" + windowState.name() + "'");
-        }
-    }
+//    public void setWindowState(CandidateWindowState windowState) {
+//        switch (windowState) {
+//            case Inputing:
+//                openCandidatesList();
+//                break;
+//            case Wait:
+//                closeCandidatesListAndReset();
+//                break;
+//            case ArgumentInputing:
+//                openCandidatesList();
+//                break;
+//            case ArgumentWait:
+//                closeCandidatesList();
+//                break;
+//            default:
+//                throw new IllegalStateException("Illegal state of window: '" + windowState.name() + "'");
+//        }
+//    }
 
     @Override
     public void setText(String t) {
@@ -89,21 +85,21 @@ public class CandidatesField extends JTextField {
         return settingText;
     }
 
-    private void openCandidatesList() {
-        if (candidatesList.isVisible() == false) {
-            logger.trace("openCandidatesList");
-            candidatesList.setVisible(true);
-        }
-        candidatesList.resetIndex();
-    }
-
-    private void closeCandidatesListAndReset() {
-        logger.trace("closeCandidatesListAndReset");
-        candidates.reset();
-    }
-
-    private void closeCandidatesList() {
-        logger.trace("closeCandidatesList");
-    }
+//    private void openCandidatesList() {
+//        if (candidatesList.isVisible() == false) {
+//            logger.trace("openCandidatesList");
+//            candidatesList.setVisible(true);
+//        }
+//        candidatesList.resetIndex();
+//    }
+//
+//    private void closeCandidatesListAndReset() {
+//        logger.trace("closeCandidatesListAndReset");
+//        candidates.reset();
+//    }
+//
+//    private void closeCandidatesList() {
+//        logger.trace("closeCandidatesList");
+//    }
 
 }

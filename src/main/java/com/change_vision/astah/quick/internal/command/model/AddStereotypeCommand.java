@@ -13,8 +13,12 @@ import com.change_vision.astah.quick.internal.annotations.TestForMethod;
 import com.change_vision.astah.quick.internal.command.ResourceCommandIconDescription;
 import com.change_vision.astah.quick.internal.exception.NotImplementationException;
 import com.change_vision.jude.api.inf.model.INamedElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AddStereotypeCommand implements CandidateAndArgumentSupportCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddStereotypeCommand.class);
     
     private ModelAPI api = new ModelAPI();
     
@@ -50,11 +54,12 @@ public class AddStereotypeCommand implements CandidateAndArgumentSupportCommand 
 
     @Override
     public Candidate[] candidate(Candidate[] committeds,String searchKey) {
+        logger.trace("get candidate candidate:'{}', key: '{}'", committeds, searchKey);
         if (searchKey.isEmpty()) {
             if (committeds == null || committeds.length == 0) {
                 return findTargetElement(searchKey);
             }
-            return new Candidate[0];
+            return findStereotypes(searchKey);
         }
         String key = trimer.trim(committeds,searchKey);
         if (committeds.length == 0) {

@@ -58,7 +58,7 @@ public class CandidateHolder {
             if (isCommitted()) {
                 Command old = this.command;
                 this.command = null;
-                support.firePropertyChange(PROP_OF_COMMAND, old, command);
+                support.firePropertyChange(PROP_OF_COMMAND, old, null);
                 return old;
             }
             return null;

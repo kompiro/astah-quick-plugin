@@ -51,4 +51,9 @@ public class SelectModelCommand implements Command {
     public INamedElement getElement() {
         return candidate.getElement();
     }
+
+    @Override
+    public String toString() {
+        return String.format("SelectModelCommand[candidate:%s]",candidate.getName());
+    }
 }

@@ -9,6 +9,7 @@ import com.change_vision.astah.quick.command.exception.ExecuteCommandException;
 import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.command.CommandExecutor;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidateAutoCompleteDocument;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,10 +30,10 @@ public class CandidateDeciderTest {
     }
 
     @Mock
-    private QuickWindow window;
+    private CandidateAutoCompleteDocument doc;
 
     @Mock
-    private CandidatesField candidatesField;
+    private QuickWindow window;
 
     @Mock
     private Candidates candidates;
@@ -66,7 +67,7 @@ public class CandidateDeciderTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        decider = new CandidateDecider(window, candidatesField,builder , executor);
+        decider = new CandidateDecider(window, doc ,builder , executor);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -119,7 +120,7 @@ public class CandidateDeciderTest {
         decider.decide(candidate);
 
         verify(builder).add(eq(candidate));
-        verify(candidatesField).setText(anyString());
+        verify(doc).commit();
 
         verify(window,never()).close();
         verify(executor,never()).execute(eq(builder), anyString());
@@ -132,7 +133,7 @@ public class CandidateDeciderTest {
         decider.decide(immediateCandidate);
 
         verify(builder).add(eq(immediateCandidate));
-        verify(candidatesField).setText(anyString());
+        verify(doc).commit();
 
         verify(window).close();
         verify(executor).execute(eq(builder), anyString());
@@ -152,7 +153,7 @@ public class CandidateDeciderTest {
         decider.decide(command);
 
         verify(builder).commit(command);
-        verify(candidatesField).setText(anyString());
+        verify(doc).commit();
     }
 
     @Test
@@ -160,7 +161,7 @@ public class CandidateDeciderTest {
         decider.decide(immediateCommand);
 
         verify(builder).commit(immediateCommand);
-        verify(candidatesField).setText(anyString());
+        verify(doc).commit();
 
         verify(window).close();
         verify(executor).execute(eq(builder), anyString());

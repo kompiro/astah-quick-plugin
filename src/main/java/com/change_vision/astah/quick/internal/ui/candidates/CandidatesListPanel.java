@@ -73,8 +73,7 @@ public class CandidatesListPanel extends JPanel {
         super.paintComponent(graphics);
     }
 
-    public void setCandidateText(String commandCandidateText) {
-        candidates.filter(commandCandidateText);
+    public void update() {
         selector.setCurrentIndex(0);
         Candidate[] candidatesData = candidates.getCandidates();
 
