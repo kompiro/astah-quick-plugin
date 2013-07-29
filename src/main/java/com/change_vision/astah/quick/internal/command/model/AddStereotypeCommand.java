@@ -79,14 +79,13 @@ public class AddStereotypeCommand implements CandidateAndArgumentSupportCommand 
     }
 
     private Candidate[] findTargetElement(String key) {
-        Candidate[] candidates = new Candidate[0];
         INamedElement[] founds = api.findClassOrPackage(key);
         if (founds.length == 0) {
             return new Candidate[]{
                     new NotFound()
             };
         }
-        candidates = new Candidate[founds.length];
+        Candidate[] candidates = new Candidate[founds.length];
         for (int i = 0; i < founds.length; i++) {
             INamedElement element = founds[i];
             candidates[i] = new ElementCandidate(element);
@@ -97,7 +96,7 @@ public class AddStereotypeCommand implements CandidateAndArgumentSupportCommand 
     @Override
     public void execute(Candidate[] candidates, String[] arguments) throws ExecuteCommandException {
         Candidate target = candidates[0];
-        INamedElement element = null;
+        INamedElement element;
         if (target instanceof ElementCandidate) {
             ElementCandidate elementCandidate = (ElementCandidate) target;
             element = elementCandidate.getElement();

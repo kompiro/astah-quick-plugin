@@ -8,7 +8,6 @@ import com.change_vision.astah.quick.internal.command.Candidates;
 import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidateAutoCompleteDocument;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.CandidatesField;
-import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidateWindowState;
 import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import net.miginfocom.swing.MigLayout;
 
@@ -47,10 +46,10 @@ public class QuickPanel extends JPanel implements PropertyChangeListener {
         }
     }
 
-    private CandidatesField candidatesField;
-    private HelpField helpField;
-    private JLabel iconLabel;
-    private Icon astahIcon;
+    private final CandidatesField candidatesField;
+//    private HelpField helpField;
+    private final JLabel iconLabel;
+    private final Icon astahIcon;
     private final CandidatesListPanel candidatesList;
 
     public QuickPanel(final QuickWindow quickWindow, Candidates candidates, CandidateHolder builder) {

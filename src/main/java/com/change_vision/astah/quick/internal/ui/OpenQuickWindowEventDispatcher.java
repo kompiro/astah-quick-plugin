@@ -25,8 +25,7 @@ class OpenQuickWindowEventDispatcher implements KeyEventDispatcher {
                     Object source = me.getSource();
                     if (source instanceof Component) {
                         Component c = (Component) source;
-                        if (window != null && window.isVisible()
-                                && (window.isAncestorOf(c) || c == window) == false) {
+                        if (isShowingQuickWindow() && isNotQuickWindow(c)) {
                             window.close();
                             window.reset();
                             ((MouseEvent) event).consume();
@@ -34,6 +33,14 @@ class OpenQuickWindowEventDispatcher implements KeyEventDispatcher {
                     }
                 }
             }
+        }
+
+        private boolean isShowingQuickWindow() {
+            return window != null && window.isVisible();
+        }
+
+        private boolean isNotQuickWindow(Component c) {
+            return (window.isAncestorOf(c) || c == window) == false;
         }
     }
 
@@ -50,6 +57,8 @@ class OpenQuickWindowEventDispatcher implements KeyEventDispatcher {
     private QuickWindow window;
 
     private final Commands commands;
+
+    private final Environment env = new Environment();
 
     OpenQuickWindowEventDispatcher(QuickProperties properties, Commands commands) {
         this.commands = commands;
@@ -89,7 +98,7 @@ class OpenQuickWindowEventDispatcher implements KeyEventDispatcher {
     }
 
     private boolean isWindowsOrMac() {
-        return QuickWindow.IS_WINDOWS || QuickWindow.IS_MAC;
+        return  env.isWindows() || env.isMac();
     }
 
     private boolean isOnWindowsOrOnMacIllegalEvents(KeyEvent e) {
