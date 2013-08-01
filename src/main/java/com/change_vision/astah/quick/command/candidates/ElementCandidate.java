@@ -343,4 +343,8 @@ public class ElementCandidate implements Candidate {
 		return element;
 	}
 
+    @Override
+    public String toString() {
+        return String.format("ElementCandidate : '%s' ",getName());
+    }
 }
