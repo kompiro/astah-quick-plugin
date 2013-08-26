@@ -6,6 +6,9 @@ import com.change_vision.astah.quick.internal.command.Candidates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 public class CandidatesSelector {
 
     /**
@@ -13,8 +16,11 @@ public class CandidatesSelector {
      */
     private static final Logger logger = LoggerFactory.getLogger(CandidatesSelector.class);
 
+    public static final String PROP_OF_CANDIDATE = "candidate";
+
     private int currentIndex;
-    private Candidates candidates;
+    private final Candidates candidates;
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public CandidatesSelector(Candidates candidates) {
         this.candidates = candidates;
@@ -27,7 +33,7 @@ public class CandidatesSelector {
         if (currentIndex < 0) {
             currentIndex = getCandidates().length - 1;
         }
-        firePropertyChange("currentIndex", oldValue, currentIndex);
+        fireIndexChange(oldValue, currentIndex);
     }
 
     public Candidate current() {
@@ -38,17 +44,12 @@ public class CandidatesSelector {
     }
 
     public void down() {
-        int oldValue = currentIndex;
+        int oldIndex = currentIndex;
         currentIndex++;
         if (currentIndex >= getCandidates().length) {
             currentIndex = 0;
         }
-        firePropertyChange("currentIndex", oldValue, currentIndex);
-    }
-
-    public void firePropertyChange(String propertyName, Object oldValue,
-                                   Object newValue) {
-        logger.trace("{}: old:'{}' new:'{}'", new Object[]{propertyName, oldValue, newValue});
+        fireIndexChange(oldIndex, currentIndex);
     }
 
     public Candidate[] getCandidates() {
@@ -62,6 +63,21 @@ public class CandidatesSelector {
     public void setCurrentIndex(int index) {
         int oldValue = currentIndex;
         currentIndex = index;
-        firePropertyChange("currentIndex", oldValue, currentIndex);
+        fireIndexChange(oldValue, currentIndex);
+    }
+
+    private void fireIndexChange(int oldValue, int newValue) {
+        logger.trace("{}: old:'{}' new:'{}'", new Object[]{"currentIndex", oldValue, newValue});
+        if (oldValue > -1 && newValue > -1 && getCandidates() != null && getCandidates().length != 0) {
+            support.firePropertyChange(PROP_OF_CANDIDATE,getCandidates()[oldValue],getCandidates()[newValue]);
+        }
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
     }
 }

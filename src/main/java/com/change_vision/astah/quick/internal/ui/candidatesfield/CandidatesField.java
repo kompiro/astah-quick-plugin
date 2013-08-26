@@ -8,6 +8,8 @@ import com.change_vision.astah.quick.internal.ui.candidatesfield.state.Candidate
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 @SuppressWarnings("serial")
 public class CandidatesField extends JTextField {
@@ -17,10 +19,10 @@ public class CandidatesField extends JTextField {
         setColumns(16);
         setEditable(true);
 
-        CandidateAutoCompleteDocument document = new CandidateAutoCompleteDocument(this, candidates, holder);
-        CandidatesListUpdateListener listener = new CandidatesListUpdateListener(candidatesList);
-        document.addDocumentListener(listener);
+        CandidateAutoCompleteDocument document = new CandidateAutoCompleteDocument(this, candidatesList, candidates, holder);
         setDocument(document);
+        PropertyChangeListener selectionChangeListener = new CandidateSelectionChangeListener(document);
+        selector.addPropertyChangeListener(selectionChangeListener);
 
         CommitOrExecuteCommandAction commandAction = new CommitOrExecuteCommandAction(document, quickWindow, holder, selector);
         setAction(commandAction);

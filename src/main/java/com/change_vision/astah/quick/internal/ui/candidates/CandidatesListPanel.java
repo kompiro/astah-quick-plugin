@@ -102,11 +102,6 @@ public class CandidatesListPanel extends JPanel {
         candidateList.setSelectedValue(candidate, true);
     }
 
-    public void resetIndex() {
-        logger.trace("reset index");
-        resetCandidateListIndex();
-    }
-
     @Override
     public void setVisible(boolean visible) {
         logger.trace("visible:{}", visible);

@@ -3,27 +3,33 @@ package com.change_vision.astah.quick.internal.ui.candidatesfield;
 import com.change_vision.astah.quick.command.Candidate;
 import com.change_vision.astah.quick.command.candidates.NotFound;
 import com.change_vision.astah.quick.command.candidates.ValidState;
+import com.change_vision.astah.quick.internal.annotations.TestForMethod;
 import com.change_vision.astah.quick.internal.command.CandidateHolder;
 import com.change_vision.astah.quick.internal.command.Candidates;
+import com.change_vision.astah.quick.internal.ui.candidates.CandidatesListPanel;
+import com.change_vision.astah.quick.internal.ui.candidatesfield.state.CandidatesSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.text.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  */
-public class CandidateAutoCompleteDocument extends PlainDocument{
+public class CandidateAutoCompleteDocument extends PlainDocument {
     private final CandidatesField documentOwner;
     private final Candidates candidates;
     private final CandidateTextParser parser;
     private final CandidateHolder holder;
 
     private final Logger logger = LoggerFactory.getLogger(CandidateAutoCompleteDocument.class);
+    private final CandidatesListPanel candidatesList;
 
-    public CandidateAutoCompleteDocument(CandidatesField documentOwner, Candidates candidates, CandidateHolder holder) {
-        logger.trace("created");
+    public CandidateAutoCompleteDocument(CandidatesField documentOwner,CandidatesListPanel candidatesList, Candidates candidates, CandidateHolder holder) {
         this.documentOwner = documentOwner;
+        this.candidatesList = candidatesList;
         this.candidates = candidates;
         this.holder = holder;
         this.parser = new CandidateTextParser(holder);
@@ -31,20 +37,19 @@ public class CandidateAutoCompleteDocument extends PlainDocument{
 
     @Override
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-        logger.trace("start insertString: '{}'",str);
+        logger.trace("start insertString: offs:'{}' str:'{}' attr:'{}'",new Object[]{offs,str,a});
         if (str == null || str.length() == 0) {
             return;
         }
 
-        String text = getText(0, offs); // Current text.
+        String text = getText(0, offs);
         String completion = complete(text + str);
         logger.trace("completion: '{}'", completion);
         int length = offs + str.length();
         logger.trace("length: '{}'", length);
         if (completion != null && text.length() + str.length() > 0) {
             if (holder.isCommitted()){
-                StringBuilder builder = new StringBuilder();
-                builder.append(holder.getCommandText());
+                StringBuilder builder = new StringBuilder(holder.getCommandText());
                 builder.append(CandidateHolder.SEPARATE_COMMAND_CHAR);
                 String base = builder.toString();
                 int substringStart = length - base.length() - 1;
@@ -55,11 +60,20 @@ public class CandidateAutoCompleteDocument extends PlainDocument{
                 str = completion.substring(length - 1);
 
             }
+            logger.trace("do insertString: offs:'{}' str:'{}' attr:'{}'",new Object[]{offs,str,a});
             super.insertString(offs, str, a);
             documentOwner.select(length, getLength());
         } else {
+            logger.trace("do insertString: offs:'{}' str:'{}' attr:'{}'",new Object[]{offs,str,a});
             super.insertString(offs, str, a);
         }
+    }
+
+    @Override
+    public void replace(int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+        logger.trace("start replace offset:'{}' length:'{}' text:'{}' attrs:'{}'",
+                new Object[]{offset, length, text, attrs});
+        super.replace(offset, length, text, attrs);
     }
 
     @Override
@@ -75,19 +89,32 @@ public class CandidateAutoCompleteDocument extends PlainDocument{
         }
         String candidateText = parser.getCandidateText(text);
         candidates.filter(candidateText);
+        candidatesList.update();
+    }
+
+    @Override
+    public void remove(int offs, int len) throws BadLocationException {
+        logger.trace("remove offs:'{}' len:'{}'",offs,len);
+        super.remove(offs, len);
     }
 
     public void commit() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(holder.getCommandText());
+        StringBuilder builder = new StringBuilder(holder.getCommandText());
         builder.append(CandidateHolder.SEPARATE_COMMAND_CHAR);
-        String base = builder.toString();
-        String insert = base.substring(getLength());
+        String str = builder.toString();
+        Content content = getContent();
+        writeLock();
         try {
-            super.insertString(getLength(), insert, new SimpleAttributeSet());
+            content.remove(0, getLength());
+            content.insertString(0, str);
         } catch (BadLocationException e) {
+            logger.error("Bad Location",e);
+        } finally {
+            writeUnlock();
         }
+
         documentOwner.setCaretPosition(getLength());
+        candidatesList.update();
     }
 
     @Override
@@ -96,6 +123,7 @@ public class CandidateAutoCompleteDocument extends PlainDocument{
             return;
         }
         super.insertUpdate(chng, attr);
+        candidatesList.update();
     }
 
     private boolean isInputConversion(AttributeSet attrSet) {
@@ -106,21 +134,56 @@ public class CandidateAutoCompleteDocument extends PlainDocument{
     private String complete(String str) {
         String candidateText = parser.getCandidateText(str);
         candidates.filter(candidateText);
+        if (candidates.getCandidates() == null ||
+            candidates.getCandidates().length == 0) {
+            return candidateText;
+        }
         Candidate topCandidate = candidates.getCandidates()[0];
         if (topCandidate instanceof ValidState ||
-            topCandidate instanceof NotFound ||
-            topCandidate == null){
+            topCandidate instanceof NotFound){
             return candidateText;
         }
         return topCandidate.getName();
     }
 
     private String getText(Document document){
+        int length = document.getLength();
         try {
-            return document.getText(0,document.getLength());
+            return document.getText(0,length);
         } catch (BadLocationException e) {
             return "";
         }
     }
 
+    void updateCandidate(Candidate candidate) {
+        if (candidate == null) {
+            throw new IllegalArgumentException("candidate is null.");
+        }
+        StringBuilder builder = new StringBuilder(holder.getCommandText());
+        if (holder.isCommitted()){
+            builder.append(CandidateHolder.SEPARATE_COMMAND_CHAR);
+        }
+        String name = candidate.getName();
+        builder.append(name);
+        String str = builder.toString();
+        Content content = getContent();
+        writeLock();
+        try {
+            content.remove(0, getLength());
+            content.insertString(0, str);
+        } catch (BadLocationException e) {
+            logger.warn("Bad Location",e);
+        }finally {
+            writeUnlock();
+        }
+        int position = builder.length();
+        logger.trace("select position:'{}' length:'{}'",position,getLength());
+        documentOwner.select(position,getLength());
+    }
+
+
+    @TestForMethod
+    String getText() throws BadLocationException {
+        return getText(0, getLength());
+    }
 }
