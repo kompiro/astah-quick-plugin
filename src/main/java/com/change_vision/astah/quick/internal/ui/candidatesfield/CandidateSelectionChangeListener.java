@@ -12,7 +12,7 @@ import java.beans.PropertyChangeListener;
 
 class CandidateSelectionChangeListener implements PropertyChangeListener {
 
-    private final Logger logger = LoggerFactory.getLogger(CandidateAutoCompleteDocument.class);
+    private final Logger logger = LoggerFactory.getLogger(CandidateSelectionChangeListener.class);
 
     private final CandidateAutoCompleteDocument document;
 
