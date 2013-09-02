@@ -191,6 +191,22 @@ public class CandidateAutoCompleteDocumentTest {
 
         String actual = document.getText();
         assertThat(actual,is("create class Association"));
+        verify(documentOwner).select(13, 24);
+    }
+
+    @Test
+    public void updateCandidateWithFoundSecondCandidateAndInput() throws BadLocationException {
+        when(foundCommand.getName()).thenReturn("create class");
+        holder.commit(foundCommand);
+        when(foundCandidate.getName()).thenReturn("Association");
+
+        document.insertString(0,"create class",null);
+        document.updateCandidate(foundCandidate);
+        document.replace(13, 1, "a",null);
+
+        String actual = document.getText();
+        assertThat(actual,is("create class association"));
+        verify(documentOwner).select(14, 24);
     }
 
     @Test
@@ -207,5 +223,7 @@ public class CandidateAutoCompleteDocumentTest {
 
         String actual = document.getText();
         assertThat(actual,is("add stereotype InterfaceA interface"));
+        verify(documentOwner).select(26, 35);
     }
+
 }
